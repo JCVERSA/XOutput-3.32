@@ -1,0 +1,93 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+version: 3.31-{branch}-{build}
+
+branches:
+  only:
+    - master
+    - 3.x
+
+skip_tags: true
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+environment:
+  versionnumber: 3.31
+  sonarcloudtoken:
+    secure: VMTLc0vSBXvIH5sBuyKY6ri8IL3I5kYpXnCK3xYPkfXK0+tFnIwlotzE3Gn5Yu4u
+
+image: Visual Studio 2019
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+platform: Any CPU
+
+configuration: Release
+  
+build_script:
+  - dotnet tool install --global dotnet-sonarscanner
+  - dotnet sonarscanner begin /k:"XOutput" /d:"sonar.host.url=https://sonarcloud.io" /o:"csutorasa" /d:"sonar.login=%sonarcloudtoken%" /d:sonar.cs.opencover.reportsPaths="XOutputTests\coverage.opencover.xml" /d:sonar.coverage.exclusions="**Tests*.cs"
+  - dotnet msbuild -p:Configuration=Release -p:Version=%versionnumber% -p:AssemblyVersion=%versionnumber% -p:FileVersion=%versionnumber%
+#  - dotnet build -c Release -p:Version=%versionnumber% -p:AssemblyVersion=%versionnumber% -p:FileVersion=%versionnumber%
+
+before_build:
+  - dotnet restore
+  
+after_build:
+  - 7z a XOutput.zip %APPVEYOR_BUILD_FOLDER%\XOutput\bin\Release\net452\*.exe
+
+#---------------------------------#
+#       tests configuration       #
+#---------------------------------#
+
+test_script:
+  - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+after_test:
+  - dotnet sonarscanner end /d:"sonar.login=%sonarcloudtoken%"
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+artifacts:
+  - path: XOutput.zip
+    name: XOutput
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+deploy:
+
+#---------------------------------#
+#        global handlers          #
+#---------------------------------#
+
+on_success:
+
+on_failure:
+
+on_finish:
+
+
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
+notifications:
+  - provider: Email
+    to:
+      - csutorasa@gmail.com
+    on_build_success: false

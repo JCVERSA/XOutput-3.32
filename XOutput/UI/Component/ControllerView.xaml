@@ -18,21 +18,31 @@
             <!-- name + status pill -->
             <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0">
                 <TextBlock Text="{Binding Model.DisplayName}" Style="{StaticResource TextBodyBase}" TextTrimming="CharacterEllipsis"/>
-                <Border x:Name="StatusPill" Background="{StaticResource BrushSurfaceContainerHigh}"
-                        CornerRadius="9999" Padding="8,2" Margin="0,4,0,0" HorizontalAlignment="Left">
-                    <TextBlock x:Name="StatusPillText" Text="{Binding Model.StatusText}"
-                               Style="{StaticResource TextLabelCaps}" FontSize="10" Foreground="{StaticResource BrushOnSurfaceVariant}"/>
+                <Border CornerRadius="9999" Padding="8,2" Margin="0,4,0,0" HorizontalAlignment="Left">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{StaticResource BrushSurfaceContainerHigh}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Model.Started}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource BrushNavActiveBackground}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding Model.StatusText}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource TextLabelCaps}">
+                                <Setter Property="FontSize" Value="10"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrushOnSurfaceVariant}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Model.Started}" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource BrushPrimary}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </Border>
-                <StackPanel.Style>
-                    <Style TargetType="StackPanel">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Model.Started}" Value="True">
-                                <Setter TargetName="StatusPill" Property="Background" Value="{StaticResource BrushNavActiveBackground}"/>
-                                <Setter TargetName="StatusPillText" Property="Foreground" Value="{StaticResource BrushPrimary}"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
             </StackPanel>
             <!-- remove -->
             <Button Grid.Column="1" Margin="4,0" Padding="10,6" Click="RemoveClick"
@@ -40,7 +50,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Path Data="{StaticResource IconRemove}"
                           Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.8" StrokeLineCap="Round" StrokeLineJoin="Round"
+                          StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
                           Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='RemoveController'}"/>
                 </StackPanel>
@@ -51,7 +61,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Path Data="{StaticResource IconEdit}"
                           Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.8" StrokeLineCap="Round" StrokeLineJoin="Round"
+                          StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
                           Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Edit'}"/>
                 </StackPanel>
@@ -62,7 +72,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Path x:Name="ActionIcon"
                           Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.8" StrokeLineCap="Round" StrokeLineJoin="Round"
+                          StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
                           Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0">
                         <Path.Style>
                             <Style TargetType="Path">

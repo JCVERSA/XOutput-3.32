@@ -27,7 +27,7 @@
             <Button Grid.Column="2" Margin="8,0,0,0" Padding="12,6" Click="OpenClick">
                 <StackPanel Orientation="Horizontal">
                     <Path Data="{StaticResource IconConfigure}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.8" StrokeLineCap="Round" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0"/>
+                          StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Configure'}"/>
                 </StackPanel>
             </Button>

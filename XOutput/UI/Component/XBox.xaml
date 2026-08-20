@@ -40,8 +40,8 @@ C 200,64 178,62 150,55 Z"
               Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2"
               StrokeLineJoin="Round" Fill="{x:Null}"/>
         <!-- subtle grip detail lines -->
-        <Path Data="M 62,150 C 55,165 55,182 64,196" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.4" StrokeLineCap="Round"/>
-        <Path Data="M 378,150 C 385,165 385,182 376,196" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.4" StrokeLineCap="Round"/>
+        <Path Data="M 62,150 C 55,165 55,182 64,196" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+        <Path Data="M 378,150 C 385,165 385,182 376,196" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
 
         <!-- XBOX wordmark -->
         <TextBlock Canvas.Left="196" Canvas.Top="70" Text="XBOX" FontSize="9" FontWeight="Bold"

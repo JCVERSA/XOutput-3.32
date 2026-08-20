@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
             <Path Data="{StaticResource IconInfo}" Stroke="{StaticResource BrushPrimary}"
-                  StrokeThickness="1.8" StrokeLineCap="Round" Width="20" Height="20" Stretch="Uniform"
+                  StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="20" Height="20" Stretch="Uniform"
                   VerticalAlignment="Center" Margin="0,0,10,0"/>
             <TextBlock Text="{Binding Title}" Style="{StaticResource TextHeadlineMd}" VerticalAlignment="Center"/>
         </StackPanel>

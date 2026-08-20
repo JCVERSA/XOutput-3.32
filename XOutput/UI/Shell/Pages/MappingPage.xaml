@@ -332,7 +332,7 @@
                     Click="ExportProfileClick" IsEnabled="{Binding HasController}">
                 <StackPanel Orientation="Horizontal">
                     <Path Data="{StaticResource IconExport}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.8" StrokeLineCap="Round" Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0"/>
+                          StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0"/>
                     <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ExportProfile'}"/>
                 </StackPanel>
             </Button>

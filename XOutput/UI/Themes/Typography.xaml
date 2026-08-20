@@ -82,7 +82,6 @@
         <Setter Property="FontFamily" Value="{StaticResource FontInter}"/>
         <Setter Property="FontSize" Value="11"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="CharacterSpacing" Value="50"/>
         <Setter Property="Foreground" Value="{StaticResource BrushOnSurfaceVariant}"/>
         <Setter Property="TextWrapping" Value="NoWrap"/>
     </Style>

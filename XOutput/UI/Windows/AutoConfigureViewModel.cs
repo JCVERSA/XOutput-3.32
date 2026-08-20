@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,6 +34,8 @@ namespace XOutput.UI.Windows
             this.inputDevices = inputDevices;
             this.valuesToRead = valuesToRead;
             xInputType = valuesToRead.First();
+            Model.StepCount = valuesToRead.Length;
+            UpdateStepText();
             if (valuesToRead.Length > 1)
             {
                 Model.ButtonsVisibility = System.Windows.Visibility.Collapsed;
@@ -180,9 +182,17 @@ namespace XOutput.UI.Windows
             {
                 xInputType = valuesToRead[index + 1];
                 Model.XInput = xInputType;
+                UpdateStepText();
                 return true;
             }
             return false;
+        }
+
+        private void UpdateStepText()
+        {
+            int index = Array.IndexOf(valuesToRead, xInputType);
+            Model.StepIndex = index + 1;
+            Model.StepText = string.Format(LanguageModel.Instance.Translate("WizardStep"), Model.StepIndex, Model.StepCount);
         }
 
         private void CalculateValues()

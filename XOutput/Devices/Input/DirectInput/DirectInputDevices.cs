@@ -1,7 +1,7 @@
-﻿using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vortice.DirectInput;
 using XOutput.Logging;
 
 namespace XOutput.Devices.Input.DirectInput
@@ -16,7 +16,7 @@ namespace XOutput.Devices.Input.DirectInput
         /// </summary>
         private const string EmulatedSCPID = "028e045e-0000-0000-0000-504944564944";
 
-        private readonly SharpDX.DirectInput.DirectInput directInput = new SharpDX.DirectInput.DirectInput();
+        private readonly IDirectInput8 directInput = DInput.DirectInput8Create();
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(DirectDevice));
 
         ~DirectInputDevices()
@@ -58,12 +58,14 @@ namespace XOutput.Devices.Input.DirectInput
         {
             try
             {
-                var joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                if (joystick.Information.ProductGuid.ToString() == EmulatedSCPID || (joystick.Capabilities.AxeCount < 1 && joystick.Capabilities.ButtonCount < 1))
+                var joystick = directInput.CreateDevice(deviceInstance.InstanceGuid);
+                if (joystick.DeviceInfo.ProductGuid.ToString() == EmulatedSCPID || (joystick.Capabilities.AxeCount < 1 && joystick.Capabilities.ButtonCount < 1))
                 {
                     joystick.Dispose();
                     return null;
                 }
+                // Vortice does not set the data format implicitly (unlike SharpDX's Joystick constructor)
+                joystick.SetDataFormat<RawJoystickState>();
                 joystick.Properties.BufferSize = 128;
                 var device = new DirectDevice(deviceInstance, joystick);
                 InputDevices.Instance.Add(device);

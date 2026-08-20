@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Kinetic Console — XOutput page content preview (Prompt 4)</title>
+<style>
+  :root{
+    --bg:#0F150C; --low:#181D14; --container:#1B2117; --high:#262C21;
+    --highest:#31372C; --bright:#353B30; --on:#DFE5D5; --onvar:#BFCAB4;
+    --outline:#899480; --outlinevar:#404A39; --primary:#97F866;
+    --primaryc:#7CDB4D; --onprimaryc:#225D00; --primarychover:#95E26F;
+    --navactive:#1A7CDB4D; --warning:#FFC877; --error:#FFB4AB;
+    --warnsoft:#33FFC877; --errsoft:#33FFB4AB;
+  }
+  @font-face{font-family:'Inter';font-weight:400;src:url('../XOutput/Resources/Fonts/Inter/Inter-Regular.ttf') format('truetype');}
+  @font-face{font-family:'Inter';font-weight:600;src:url('../XOutput/Resources/Fonts/Inter/Inter-SemiBold.ttf') format('truetype');}
+  @font-face{font-family:'Inter';font-weight:700;src:url('../XOutput/Resources/Fonts/Inter/Inter-Bold.ttf') format('truetype');}
+  @font-face{font-family:'JetBrains Mono';font-weight:500;src:url('../XOutput/Resources/Fonts/JetBrainsMono/JetBrainsMono-Medium.ttf') format('truetype');}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#05080A;color:var(--on);font-family:'Inter',Segoe UI,Arial,sans-serif;font-size:12px;padding:28px;display:flex;flex-direction:column;gap:18px;align-items:center;}
+  .notice{max-width:980px;text-align:center;color:#8aa;font-size:12px;line-height:1.6;}
+  .notice b{color:var(--onvar);}
+  .tabs{display:flex;gap:6px;margin-bottom:2px;}
+  .tabs button{background:var(--container);border:1px solid var(--outlinevar);color:var(--onvar);border-radius:8px;padding:8px 18px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;}
+  .tabs button.active{background:var(--primaryc);color:var(--onprimaryc);border-color:var(--primaryc);}
+  .page{display:none;width:980px;background:var(--bg);border:1px solid #26301f;border-radius:12px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.6);}
+  .page.active{display:block;}
+  .h1{font-size:24px;font-weight:600;margin:4px 0 12px 4px;display:flex;align-items:center;}
+  .h1 .btn{margin-left:auto;}
+  .btn{background:var(--primaryc);color:var(--onprimaryc);font-weight:600;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-family:inherit;font-size:12px;}
+  .btn:hover{background:var(--primarychover);}
+  .btn.sec{background:var(--high);color:var(--on);border:1px solid var(--outlinevar);}
+  .btn.sec:hover{background:var(--highest);}
+  .cols{display:flex;gap:12px;}
+  .card{background:var(--container);border:1px solid var(--outlinevar);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;}
+  .card .hdr{display:flex;align-items:center;margin-bottom:2px;}
+  .card .hdr h3{font-size:18px;font-weight:600;}
+  .tag{margin-left:auto;background:var(--secondaryc,#47464A);border-radius:9999px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--on);}
+  .devrow{background:var(--low);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--primaryc);flex-shrink:0;}
+  .devrow .name{font-size:14px;}
+  .devrow .id{font-family:'JetBrains Mono',Consolas,monospace;font-size:10px;color:var(--onvar);}
+  .devrow .spacer{flex:1;}
+  .pill{background:var(--high);border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--onvar);}
+  .pill.active{background:var(--navactive);color:var(--primary);}
+  .pill.ok{background:var(--navactive);color:var(--primary);}
+  .pill.warn{background:var(--warnsoft);color:var(--warning);}
+  .pill.fail{background:var(--errsoft);color:var(--error);}
+  .mono{font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;color:var(--onvar);}
+  .mono.val{color:var(--on);}
+  .statusbar{display:flex;gap:8px;margin-top:12px;}
+  .statusbar .pill{display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;letter-spacing:0;}
+  .statusbar .mono{font-size:11px;}
+  .statusbar .backend{margin-left:auto;}
+  .statusbar .backend .mono{color:var(--primary);}
+  .empty{text-align:center;color:var(--onvar);padding:28px 12px;font-size:12px;line-height:1.5;}
+  /* mapping page */
+  .tabs2{display:flex;gap:4px;margin-bottom:8px;}
+  .tabs2 .t{background:transparent;border:none;border-radius:8px;padding:6px 14px;color:var(--onvar);font-weight:600;font-family:inherit;font-size:13px;cursor:pointer;}
+  .tabs2 .t.active{background:var(--primaryc);color:var(--onprimaryc);}
+  .tabbody{background:var(--container);border:1px solid var(--outlinevar);border-radius:12px;padding:12px;display:flex;gap:12px;min-height:380px;}
+  .panel{display:flex;flex-direction:column;gap:8px;min-width:0;}
+  .panel h4{font-size:18px;font-weight:600;}
+  .grouplbl{font-size:11px;font-weight:700;letter-spacing:2.5px;color:var(--onvar);text-transform:uppercase;margin-top:6px;}
+  .srow{display:flex;align-items:center;gap:10px;}
+  .srow .lbl{width:88px;font-size:12px;color:var(--on);}
+  .bar{flex:1;height:8px;background:var(--high);border-radius:4px;position:relative;}
+  .bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--primary);border-radius:4px;}
+  .bar .fill.soft{background:var(--primarychover);}
+  .srow .pct{width:44px;text-align:right;font-family:'JetBrains Mono',Consolas,monospace;font-size:10px;color:var(--onvar);}
+  .srow .tgt{font-family:'JetBrains Mono',Consolas,monospace;font-size:10px;color:var(--onvar);width:84px;text-align:right;}
+  .cfgrow{display:flex;align-items:center;gap:10px;margin:4px 0;}
+  .cfgrow .lbl{width:74px;font-size:12px;color:var(--onvar);flex-shrink:0;}
+  .combo{background:var(--low);border:1px solid var(--outlinevar);border-radius:8px;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;}
+  .combo .arrow{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--onvar);}
+  .slider{flex:1;height:16px;position:relative;}
+  .slider .track{position:absolute;left:8px;right:8px;top:7px;height:6px;background:var(--high);border-radius:3px;}
+  .slider .track .fill{position:absolute;left:0;top:0;bottom:0;background:var(--primary);border-radius:3px;}
+  .slider .thumb{position:absolute;top:3px;width:16px;height:16px;background:var(--primaryc);border:2px solid var(--primary);border-radius:50%;}
+  .preview{background:var(--low);border:1px solid var(--outlinevar);border-radius:8px;padding:10px 12px;margin-top:6px;}
+  .preview h5{font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--onvar);text-transform:uppercase;margin-bottom:8px;}
+  .pvrow{display:flex;gap:20px;}
+  .pvrow .k{font-size:11px;color:var(--onvar);}
+  .pvrow .v{font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;}
+  .pvbar{height:8px;background:var(--high);border-radius:4px;margin-top:10px;position:relative;}
+  .pvbar .fill{position:absolute;left:0;top:0;bottom:0;width:62%;background:var(--primary);border-radius:4px;}
+  .box2d{width:48px;height:48px;border:1px solid var(--outlinevar);border-radius:4px;background:var(--container);margin:10px auto 0;position:relative;}
+  .box2d::before,.box2d::after{content:'';position:absolute;background:var(--outlinevar);}
+  .box2d::before{left:0;right:0;top:50%;height:.5px;}
+  .box2d::after{top:0;bottom:0;left:50%;width:.5px;}
+  .box2d .pt{position:absolute;left:31px;top:17px;width:6px;height:6px;background:var(--primary);border-radius:50%;}
+  .actionrow{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;}
+  /* settings */
+  .setgroup{background:var(--container);border:1px solid var(--outlinevar);border-radius:12px;padding:16px 20px;margin-bottom:16px;}
+  .setgroup h3{font-size:18px;font-weight:600;margin-bottom:14px;}
+  .setrow{display:flex;align-items:center;margin:6px 0;}
+  .setrow .lbl{flex:1;font-size:14px;}
+  .checkbox{width:16px;height:16px;border-radius:4px;border:1px solid var(--primaryc);background:var(--primaryc);display:flex;align-items:center;justify-content:center;color:var(--onprimaryc);font-weight:700;font-size:11px;}
+  .checkbox.off{background:var(--low);border-color:var(--outlinevar);color:transparent;}
+  /* diagnostics */
+  .diag{background:var(--container);border:1px solid var(--outlinevar);border-radius:12px;padding:12px 16px;margin-bottom:12px;}
+  .diag h4{font-size:18px;font-weight:600;margin-bottom:8px;}
+  .diagrow{display:flex;align-items:center;height:34px;}
+  .diagrow .name{flex:1;font-size:14px;}
+  .diagrow .v{font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;margin:0 12px;}
+</style>
+</head>
+<body>
+<div class="notice">
+  <b>XOutput — page content preview (Prompt 4).</b> Browser mock of the new Home, Mapping, Settings and Diagnostics page content using the exact Kinetic Console palette + font files. German strings, plus a Russian and Simplified Chinese tab. The WPF app runs on Windows; this page mirrors the new layouts.
+</div>
+
+<div class="tabs">
+  <button class="active" data-p="home">Home (DE)</button>
+  <button data-p="mapping">Mapping (DE)</button>
+  <button data-p="settings">Settings (DE)</button>
+  <button data-p="diag">Diagnostics (DE)</button>
+  <button data-p="ru">Home (RU)</button>
+  <button data-p="zh">Home (ZH)</button>
+</div>
+
+<!-- ============ HOME ============ -->
+<div class="page active" id="p-home">
+  <div class="h1">Startseite <button class="btn" style="margin-left:auto">Add controller</button></div>
+  <div class="cols">
+    <div class="card" style="flex:1.15">
+      <div class="hdr"><h3>Eingabegeräte</h3><span class="tag">DirectInput</span></div>
+      <div class="devrow"><span class="dot"></span><div><div class="name">Xbox 360 Controller</div><div class="id">VID 045E · PID 028E</div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Konfigurieren</button></div>
+      <div class="devrow"><span class="dot"></span><div><div class="name">Logitech G27 Racing Wheel</div><div class="id">VID 046D · PID C24F</div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Konfigurieren</button></div>
+      <div class="devrow"><span class="dot" style="background:var(--highest)"></span><div><div class="name">Tastatur</div><div class="id"></div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Konfigurieren</button></div>
+      <label class="checkbox" style="display:flex;gap:8px;align-items:center;margin-top:10px"><span class="box">✓</span> Alle Eingabegeräte anzeigen</label>
+      <button class="btn sec" style="align-self:flex-start;padding:8px 16px;margin-top:10px">Aktualisierung erzwingen</button>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="hdr"><h3>Virtuelle Controller</h3><span class="tag">ViGEm</span></div>
+      <div class="devrow"><div><div class="name">Xbox 360 Controller</div><span class="pill active">AKTIV - 12 QUELLE(N)</span></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Stop</button><button class="btn sec" style="padding:5px 12px">Bearbeiten</button><button class="btn sec" style="padding:5px 12px">Entfernen</button></div>
+      <div class="empty">+ / Keine zusätzlichen virtuellen Controller aktiv.</div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <span class="pill">Aktive Geräte <span class="mono val">4</span></span>
+    <span class="pill">Aktive Controller <span class="mono val">1</span></span>
+    <span class="pill backend">Backend <span class="mono val">ViGEm</span></span>
+  </div>
+</div>
+
+<!-- ============ MAPPING ============ -->
+<div class="page" id="p-mapping">
+  <div class="h1">Zuordnung</div>
+  <div class="tabs2">
+    <span class="t active">Xbox 360 Controller</span>
+    <span class="t">Logitech G27 Racing Wheel</span>
+    <span class="t">Tastatur</span>
+    <span class="t">Maus</span>
+    <span class="t">Virtuelles Gamepad</span>
+  </div>
+  <div class="tabbody">
+    <div class="panel" style="flex:1.05">
+      <h4>Physische Eingaben</h4>
+      <div class="grouplbl">Achsen</div>
+      <div class="srow"><span class="lbl">X-Achse</span><div class="bar"><div class="fill" style="width:72%"></div></div><span class="pct">72%</span><span class="tgt">LX</span></div>
+      <div class="srow"><span class="lbl">Y-Achse</span><div class="bar"><div class="fill" style="width:31%"></div></div><span class="pct">31%</span><span class="tgt">LY</span></div>
+      <div class="srow"><span class="lbl">Z-Achse</span><div class="bar"><div class="fill soft" style="width:8%"></div></div><span class="pct">8%</span><span class="tgt">—</span></div>
+      <div class="grouplbl">Tasten</div>
+      <div class="srow"><span class="lbl">Taste 1</span><div class="bar"><div class="fill" style="width:0%"></div></div><span class="pct"></span><span class="tgt">A</span></div>
+      <div class="srow"><span class="lbl">Taste 2</span><div class="bar"><div class="fill" style="width:100%"></div></div><span class="pct"></span><span class="tgt">B</span></div>
+      <div class="srow"><span class="lbl">Taste 3</span><div class="bar"><div class="fill" style="width:0%"></div></div><span class="pct"></span><span class="tgt">—</span></div>
+    </div>
+    <div class="panel" style="flex:1">
+      <h4>Konfigurieren: <span class="mono" style="font-size:13px">X-Achse</span></h4>
+      <div class="cfgrow"><span class="lbl">Eingang</span><div class="combo" style="flex:1">X-Achse <span class="arrow"></span></div></div>
+      <div class="cfgrow"><span class="lbl">Ziel</span><div class="combo" style="flex:1">LX <span class="arrow"></span></div></div>
+      <div class="cfgrow"><span class="lbl">Deadzone</span>
+        <div class="slider"><div class="track"><div class="fill" style="width:24%"></div></div><div class="thumb" style="left:calc(8px + 24% - 8px)"></div></div>
+        <span class="mono" style="width:40px;text-align:right">12%</span>
+      </div>
+      <label class="checkbox" style="display:flex;gap:8px;align-items:center;margin-top:4px"><span class="box off">✓</span> Invertieren</label>
+      <div class="preview">
+        <h5>Live-Vorschau</h5>
+        <div class="pvrow"><div><div class="k">Rohwert</div><div class="v">0.724</div></div><div><div class="k">Kartiert</div><div class="v">0.448</div></div></div>
+        <div class="pvbar"><div class="fill" style="width:45%"></div></div>
+        <div class="box2d"><span class="pt"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="actionrow"><button class="btn sec">Profil exportieren</button><button class="btn">Zuordnung speichern</button></div>
+</div>
+
+<!-- ============ SETTINGS ============ -->
+<div class="page" id="p-settings">
+  <div class="h1">Einstellungen</div>
+  <div class="setgroup">
+    <h3>Allgemein</h3>
+    <div class="setrow"><span class="lbl">Sprache</span><div class="combo" style="width:220px">Deutsch <span class="arrow"></span></div></div>
+    <div class="setrow"><span class="lbl">In die Taskleiste minimieren</span><span class="checkbox">✓</span></div>
+    <div class="setrow"><span class="lbl">Beim Windows-Start ausführen</span><span class="checkbox off">✓</span></div>
+  </div>
+  <div class="setgroup">
+    <h3>System</h3>
+    <div class="setrow"><span class="lbl">HidGuardian setup during startup</span><span class="checkbox off">✓</span></div>
+    <div class="setrow"><span class="lbl">Automatische Geräteerkennung deaktivieren</span><span class="checkbox off">✓</span></div>
+  </div>
+</div>
+
+<!-- ============ DIAGNOSTICS ============ -->
+<div class="page" id="p-diag">
+  <div class="h1">Diagnose</div>
+  <div class="diag">
+    <h4>Xbox 360 Controller</h4>
+    <div class="diagrow"><span class="name">Achsen-Anzahl</span><span class="v">6</span><span class="pill ok">PASSED</span></div>
+    <div class="diagrow"><span class="name">Tasten-Anzahl</span><span class="v">12</span><span class="pill ok">PASSED</span></div>
+    <div class="diagrow"><span class="name">DPad-Anzahl</span><span class="v">1</span><span class="pill warn">WARNING</span></div>
+    <div class="diagrow"><span class="name">Force-Feedback-Motoren</span><span class="v">2</span><span class="pill fail">FAILED</span></div>
+  </div>
+  <div class="diag">
+    <h4>System</h4>
+    <div class="diagrow"><span class="name">ViGEm installiert</span><span class="v">✓</span><span class="pill ok">PASSED</span></div>
+    <div class="diagrow"><span class="name">Virtualisierungssoftware installiert</span><span class="v">✓</span><span class="pill ok">PASSED</span></div>
+  </div>
+</div>
+
+<!-- ============ RU ============ -->
+<div class="page" id="p-ru">
+  <div class="h1">Главная <button class="btn" style="margin-left:auto">Добавить геймпад</button></div>
+  <div class="cols">
+    <div class="card" style="flex:1.15">
+      <div class="hdr"><h3>Устройства ввода</h3><span class="tag">DirectInput</span></div>
+      <div class="devrow"><span class="dot"></span><div><div class="name">Xbox 360 Controller</div><div class="id">VID 045E · PID 028E</div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Настроить</button></div>
+      <div class="devrow"><span class="dot"></span><div><div class="name">Клавиатура</div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Настроить</button></div>
+      <label class="checkbox" style="display:flex;gap:8px;align-items:center;margin-top:10px"><span class="box">✓</span> Показать все устройства ввода</label>
+      <button class="btn sec" style="align-self:flex-start;padding:8px 16px;margin-top:10px">Обновить</button>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="hdr"><h3>Виртуальные контроллеры</h3><span class="tag">ViGEm</span></div>
+      <div class="devrow"><div><div class="name">Xbox 360 Controller</div><span class="pill active">АКТИВЕН - 12 ИСТОЧНИКОВ</span></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">Стоп</button><button class="btn sec" style="padding:5px 12px">Настроить</button><button class="btn sec" style="padding:5px 12px">Удалить</button></div>
+      <div class="empty">+ / Нет дополнительных активных виртуальных контроллеров.</div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <span class="pill">Активных устройств <span class="mono val">3</span></span>
+    <span class="pill">Активных контроллеров <span class="mono val">1</span></span>
+    <span class="pill backend">Бэкенд <span class="mono val">ViGEm</span></span>
+  </div>
+</div>
+
+<!-- ============ ZH ============ -->
+<div class="page" id="p-zh">
+  <div class="h1">主页 <button class="btn" style="margin-left:auto">添加控制器</button></div>
+  <div class="cols">
+    <div class="card" style="flex:1.15">
+      <div class="hdr"><h3>输入设备</h3><span class="tag">DirectInput</span></div>
+      <div class="devrow"><span class="dot"></span><div><div class="name">Xbox 360 控制器</div><div class="id">VID 045E · PID 028E</div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">配置</button></div>
+      <div class="devrow"><span class="dot"></span><div><div class="name">键盘</div></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">配置</button></div>
+      <label class="checkbox" style="display:flex;gap:8px;align-items:center;margin-top:10px"><span class="box">✓</span> 显示所有输入设备</label>
+      <button class="btn sec" style="align-self:flex-start;padding:8px 16px;margin-top:10px">强制刷新</button>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="hdr"><h3>虚拟控制器</h3><span class="tag">ViGEm</span></div>
+      <div class="devrow"><div><div class="name">Xbox 360 控制器</div><span class="pill active">活动 - 12 个源</span></div><span class="spacer"></span><button class="btn sec" style="padding:5px 12px">停止</button><button class="btn sec" style="padding:5px 12px">编辑</button><button class="btn sec" style="padding:5px 12px">移除</button></div>
+      <div class="empty">+ / 没有其他活动的虚拟控制器。</div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <span class="pill">活动设备 <span class="mono val">3</span></span>
+    <span class="pill">活动控制器 <span class="mono val">1</span></span>
+    <span class="pill backend">后端 <span class="mono val">ViGEm</span></span>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('p-' + b.dataset.p).classList.add('active');
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================================================================
+         Kinetic Console — Design tokens: color
+         Every color used by the application lives here as a Color plus a
+         matching SolidColorBrush. Views reference only {StaticResource BrushXxx}.
+         ================================================================ -->
+
+    <!-- Core palette -->
+    <Color x:Key="ColorBackground">#0F150C</Color>
+    <Color x:Key="ColorSurfaceContainerLow">#181D14</Color>
+    <Color x:Key="ColorSurfaceContainer">#1B2117</Color>
+    <Color x:Key="ColorSurfaceContainerHigh">#262C21</Color>
+    <Color x:Key="ColorSurfaceContainerHighest">#31372C</Color>
+    <Color x:Key="ColorSurfaceBright">#353B30</Color>
+    <Color x:Key="ColorOnSurface">#DFE5D5</Color>
+    <Color x:Key="ColorOnSurfaceVariant">#BFCAB4</Color>
+    <Color x:Key="ColorOutline">#899480</Color>
+    <Color x:Key="ColorOutlineVariant">#404A39</Color>
+    <Color x:Key="ColorPrimary">#97F866</Color>
+    <Color x:Key="ColorPrimaryContainer">#7CDB4D</Color>
+    <Color x:Key="ColorOnPrimary">#113800</Color>
+    <Color x:Key="ColorOnPrimaryContainer">#225D00</Color>
+    <Color x:Key="ColorSecondary">#C8C6CA</Color>
+    <Color x:Key="ColorSecondaryContainer">#47464A</Color>
+    <Color x:Key="ColorError">#FFB4AB</Color>
+    <Color x:Key="ColorErrorContainer">#93000A</Color>
+    <Color x:Key="ColorOnError">#690005</Color>
+
+    <!-- Brushes (one per color) -->
+    <SolidColorBrush x:Key="BrushBackground" Color="{StaticResource ColorBackground}"/>
+    <SolidColorBrush x:Key="BrushSurfaceContainerLow" Color="{StaticResource ColorSurfaceContainerLow}"/>
+    <SolidColorBrush x:Key="BrushSurfaceContainer" Color="{StaticResource ColorSurfaceContainer}"/>
+    <SolidColorBrush x:Key="BrushSurfaceContainerHigh" Color="{StaticResource ColorSurfaceContainerHigh}"/>
+    <SolidColorBrush x:Key="BrushSurfaceContainerHighest" Color="{StaticResource ColorSurfaceContainerHighest}"/>
+    <SolidColorBrush x:Key="BrushSurfaceBright" Color="{StaticResource ColorSurfaceBright}"/>
+    <SolidColorBrush x:Key="BrushOnSurface" Color="{StaticResource ColorOnSurface}"/>
+    <SolidColorBrush x:Key="BrushOnSurfaceVariant" Color="{StaticResource ColorOnSurfaceVariant}"/>
+    <SolidColorBrush x:Key="BrushOutline" Color="{StaticResource ColorOutline}"/>
+    <SolidColorBrush x:Key="BrushOutlineVariant" Color="{StaticResource ColorOutlineVariant}"/>
+    <SolidColorBrush x:Key="BrushPrimary" Color="{StaticResource ColorPrimary}"/>
+    <SolidColorBrush x:Key="BrushPrimaryContainer" Color="{StaticResource ColorPrimaryContainer}"/>
+    <SolidColorBrush x:Key="BrushOnPrimary" Color="{StaticResource ColorOnPrimary}"/>
+    <SolidColorBrush x:Key="BrushOnPrimaryContainer" Color="{StaticResource ColorOnPrimaryContainer}"/>
+    <SolidColorBrush x:Key="BrushSecondary" Color="{StaticResource ColorSecondary}"/>
+    <SolidColorBrush x:Key="BrushSecondaryContainer" Color="{StaticResource ColorSecondaryContainer}"/>
+    <SolidColorBrush x:Key="BrushError" Color="{StaticResource ColorError}"/>
+    <SolidColorBrush x:Key="BrushErrorContainer" Color="{StaticResource ColorErrorContainer}"/>
+    <SolidColorBrush x:Key="BrushOnError" Color="{StaticResource ColorOnError}"/>
+
+    <!-- Derived interactive brushes  
+         Primary container lightened/darkened for button hover/pressed states. -->
+    <SolidColorBrush x:Key="BrushPrimaryContainerHover" Color="#95E26F"/>
+    <SolidColorBrush x:Key="BrushPrimaryContainerPressed" Color="#63D42B"/>
+    <!-- Translucent surface highlight used for glossy accents. -->
+    <SolidColorBrush x:Key="BrushSurfaceBrightGloss" Color="#73353B30"/>
+    <!-- Row "recent input" flash used by device/controller list rows. -->
+    <SolidColorBrush x:Key="BrushInputActive" Color="#407CDB4D"/>
+    <!-- Sidebar navigation: active item background tint. -->
+    <SolidColorBrush x:Key="BrushNavActiveBackground" Color="#1A7CDB4D"/>
+    <!-- Modal overlay backdrop (~60% black). -->
+    <SolidColorBrush x:Key="BrushOverlayBackdrop" Color="#99000000"/>
+
+    <!-- Status / semantic accents (diagnostics) -->
+    <Color x:Key="ColorWarning">#FFC877</Color>
+    <Color x:Key="ColorWarningDark">#B26A00</Color>
+    <SolidColorBrush x:Key="BrushWarning" Color="{StaticResource ColorWarning}"/>
+    <SolidColorBrush x:Key="BrushWarningDark" Color="{StaticResource ColorWarningDark}"/>
+    <SolidColorBrush x:Key="BrushSuccess" Color="{StaticResource ColorPrimary}"/>
+    <!-- Soft translucent pill backgrounds for status badges -->
+    <SolidColorBrush x:Key="BrushWarningSoft" Color="#33FFC877"/>
+    <SolidColorBrush x:Key="BrushErrorSoft" Color="#33FFB4AB"/>
+
+    <!-- Xbox controller art accents (XBox.xaml + ColorConverter)  
+         Keeps the classic A/B/X/Y button and analog stick semantics while
+         living in the theme so no view hardcodes a color. -->
+    <Color x:Key="ColorXboxA">#35D900</Color>
+    <Color x:Key="ColorXboxABack">#249500</Color>
+    <Color x:Key="ColorXboxALabel">#ADFF92</Color>
+    <Color x:Key="ColorXboxB">#FF1303</Color>
+    <Color x:Key="ColorXboxBBack">#AB0B00</Color>
+    <Color x:Key="ColorXboxBLabel">#FFA19B</Color>
+    <Color x:Key="ColorXboxX">#0E52FF</Color>
+    <Color x:Key="ColorXboxXBack">#0032B0</Color>
+    <Color x:Key="ColorXboxXLabel">#85A7FF</Color>
+    <Color x:Key="ColorXboxY">#FFE823</Color>
+    <Color x:Key="ColorXboxYBack">#D9C300</Color>
+    <Color x:Key="ColorXboxYLabel">#FFF9C1</Color>
+    <Color x:Key="ColorXboxBumper">#FFF8F8</Color>
+    <Color x:Key="ColorXboxBumperBack">#F1F1F1</Color>
+    <Color x:Key="ColorXboxBumperLabel">#BBBBBB</Color>
+    <Color x:Key="ColorXboxTrigger">#F8F8F8</Color>
+    <Color x:Key="ColorXboxTriggerBack">#BBBBBB</Color>
+    <Color x:Key="ColorXboxTriggerLabel">#BBBBBB</Color>
+    <Color x:Key="ColorXboxStick">#999999</Color>
+    <Color x:Key="ColorXboxStickBack">#868686</Color>
+    <Color x:Key="ColorXboxStart">#F1F1F1</Color>
+    <Color x:Key="ColorXboxStartBack">#D9D9D9</Color>
+    <Color x:Key="ColorXboxHome">#CACACA</Color>
+    <Color x:Key="ColorXboxHomeBack">#77EC00</Color>
+    <Color x:Key="ColorXboxHighlight">#FF0000</Color>
+    <Color x:Key="ColorXboxHighlightBack">#800000</Color>
+    <Color x:Key="ColorXboxHighlightLabel">#FFFFFF</Color>
+    <Color x:Key="ColorXboxDPadBack">#868686</Color>
+    <SolidColorBrush x:Key="BrushXboxA" Color="{StaticResource ColorXboxA}"/>
+    <SolidColorBrush x:Key="BrushXboxABack" Color="{StaticResource ColorXboxABack}"/>
+    <SolidColorBrush x:Key="BrushXboxALabel" Color="{StaticResource ColorXboxALabel}"/>
+    <SolidColorBrush x:Key="BrushXboxB" Color="{StaticResource ColorXboxB}"/>
+    <SolidColorBrush x:Key="BrushXboxBBack" Color="{StaticResource ColorXboxBBack}"/>
+    <SolidColorBrush x:Key="BrushXboxBLabel" Color="{StaticResource ColorXboxBLabel}"/>
+    <SolidColorBrush x:Key="BrushXboxX" Color="{StaticResource ColorXboxX}"/>
+    <SolidColorBrush x:Key="BrushXboxXBack" Color="{StaticResource ColorXboxXBack}"/>
+    <SolidColorBrush x:Key="BrushXboxXLabel" Color="{StaticResource ColorXboxXLabel}"/>
+    <SolidColorBrush x:Key="BrushXboxY" Color="{StaticResource ColorXboxY}"/>
+    <SolidColorBrush x:Key="BrushXboxYBack" Color="{StaticResource ColorXboxYBack}"/>
+    <SolidColorBrush x:Key="BrushXboxYLabel" Color="{StaticResource ColorXboxYLabel}"/>
+    <SolidColorBrush x:Key="BrushXboxBumper" Color="{StaticResource ColorXboxBumper}"/>
+    <SolidColorBrush x:Key="BrushXboxBumperBack" Color="{StaticResource ColorXboxBumperBack}"/>
+    <SolidColorBrush x:Key="BrushXboxBumperLabel" Color="{StaticResource ColorXboxBumperLabel}"/>
+    <SolidColorBrush x:Key="BrushXboxTrigger" Color="{StaticResource ColorXboxTrigger}"/>
+    <SolidColorBrush x:Key="BrushXboxTriggerBack" Color="{StaticResource ColorXboxTriggerBack}"/>
+    <SolidColorBrush x:Key="BrushXboxTriggerLabel" Color="{StaticResource ColorXboxTriggerLabel}"/>
+    <SolidColorBrush x:Key="BrushXboxStick" Color="{StaticResource ColorXboxStick}"/>
+    <SolidColorBrush x:Key="BrushXboxStickBack" Color="{StaticResource ColorXboxStickBack}"/>
+    <SolidColorBrush x:Key="BrushXboxStart" Color="{StaticResource ColorXboxStart}"/>
+    <SolidColorBrush x:Key="BrushXboxStartBack" Color="{StaticResource ColorXboxStartBack}"/>
+    <SolidColorBrush x:Key="BrushXboxHome" Color="{StaticResource ColorXboxHome}"/>
+    <SolidColorBrush x:Key="BrushXboxHomeBack" Color="{StaticResource ColorXboxHomeBack}"/>
+    <SolidColorBrush x:Key="BrushXboxHighlight" Color="{StaticResource ColorXboxHighlight}"/>
+    <SolidColorBrush x:Key="BrushXboxHighlightBack" Color="{StaticResource ColorXboxHighlightBack}"/>
+    <SolidColorBrush x:Key="BrushXboxHighlightLabel" Color="{StaticResource ColorXboxHighlightLabel}"/>
+    <SolidColorBrush x:Key="BrushXboxDPadBack" Color="{StaticResource ColorXboxDPadBack}"/>
+
+    <!-- Shadow -->
+    <Color x:Key="ColorShadow">#FF000000</Color>
+
+    <!-- ================================================================
+         Design tokens: shape
+         ================================================================ -->
+    <CornerRadius x:Key="CornerRadiusSmall">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusDefault">12</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusLarge">16</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusPill">9999</CornerRadius>
+
+    <!-- ================================================================
+         Design tokens: spacing (8 px base grid)
+         ================================================================ -->
+    <x:Double x:Key="SpacingUnit">8</x:Double>
+    <x:Double x:Key="SpacingStackGap">12</x:Double>
+    <x:Double x:Key="SpacingElementGap">8</x:Double>
+    <Thickness x:Key="SpacingPageMargin">24,24,24,24</Thickness>
+    <Thickness x:Key="SpacingCardPadding">16,16,16,16</Thickness>
+    <Thickness x:Key="SpacingElementPadding">8,8,8,8</Thickness>
+
+</ResourceDictionary>

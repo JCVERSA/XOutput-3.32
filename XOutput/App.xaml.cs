@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -23,13 +23,6 @@ namespace XOutput
 
         public App()
         {
-            DependencyEmbedder dependencyEmbedder = new DependencyEmbedder();
-            dependencyEmbedder.AddPackage("Newtonsoft.Json");
-            dependencyEmbedder.AddPackage("SharpDX.DirectInput");
-            dependencyEmbedder.AddPackage("SharpDX");
-            dependencyEmbedder.AddPackage("Hardcodet.Wpf.TaskbarNotification");
-            dependencyEmbedder.AddPackage("Nefarius.ViGEm.Client");
-            dependencyEmbedder.Initialize();
             string exePath = Assembly.GetExecutingAssembly().Location;
             string cwd = Path.GetDirectoryName(exePath);
             Directory.SetCurrentDirectory(cwd);
@@ -49,7 +42,9 @@ namespace XOutput
         public async Task UnhandledException(Exception exceptionObject)
         {
             await logger.Error(exceptionObject);
-            MessageBox.Show(exceptionObject.Message + Environment.NewLine + exceptionObject.StackTrace);
+            // Best effort: the shell may not be available on a crash path.
+            XOutput.UI.Shell.ShellViewModel.Instance?.ShowMessage(LanguageModel.Instance.Translate("Error"),
+                exceptionObject.Message + Environment.NewLine + exceptionObject.StackTrace);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -69,7 +64,8 @@ namespace XOutput
                     ApplicationContext.Global.Resolve<Devices.Input.Mouse.MouseHook>().StartHook();
                 } catch (Exception ex) {
                     logger.Error(ex);
-                    MessageBox.Show(ex.ToString());
+                    // Best effort: the shell may not exist yet on a startup failure.
+                    XOutput.UI.Shell.ShellViewModel.Instance?.ShowMessage(LanguageModel.Instance.Translate("Error"), ex.ToString());
                     Application.Current.Shutdown();
                 }
             }

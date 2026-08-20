@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -7,6 +7,7 @@ using XOutput.Devices.Input;
 using XOutput.Devices.Input.DirectInput;
 using XOutput.Devices.XInput;
 using XOutput.UI.Component;
+using XOutput.UI.Shell;
 
 namespace XOutput.UI.Windows
 {
@@ -39,7 +40,11 @@ namespace XOutput.UI.Windows
         public void ConfigureAll()
         {
             var types = XInputHelper.Instance.Values;
-            new AutoConfigureWindow(new AutoConfigureViewModel(new AutoConfigureModel(), InputDevices.Instance.GetDevices(), controller.Mapper, types.ToArray()), types.Any()).ShowDialog();
+            ShellViewModel.Instance?.OpenWizard(InputDevices.Instance.GetDevices(), controller.Mapper, types.ToArray(), types.Any(), RefreshMappingViews);
+        }
+
+        private void RefreshMappingViews()
+        {
             foreach (var v in Model.MapperAxisViews.Concat(Model.MapperButtonViews).Concat(Model.MapperDPadViews))
             {
                 v.Refresh();

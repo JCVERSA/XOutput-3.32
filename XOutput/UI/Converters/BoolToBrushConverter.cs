@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -12,7 +12,7 @@ namespace XOutput.UI.Converters
     public class BoolToBrushConverter : IValueConverter
     {
         /// <summary>
-        /// Converts the bool value. Returns light green(true) or light gray(false).
+        /// Converts the bool value. Returns theme primary (true) or a muted surface color (false).
         /// </summary>
         /// <param name="value">Boolean value to convert</param>
         /// <param name="targetType">Ignored</param>
@@ -30,11 +30,11 @@ namespace XOutput.UI.Converters
             {
                 if (b == true)
                 {
-                    return new SolidColorBrush(Color.FromRgb(100, 255, 100));
+                    return ThemeHelper.GetBrush("BrushPrimary");
                 }
                 else
                 {
-                    return new SolidColorBrush(Color.FromRgb(200, 200, 200));
+                    return ThemeHelper.GetBrush("BrushSurfaceContainerHighest");
                 }
             }
         }

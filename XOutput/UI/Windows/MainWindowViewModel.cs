@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,12 +10,14 @@ using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Devices.Input.DirectInput;
 using XOutput.Devices.Mapper;
+using XOutput.Devices.XInput;
 using XOutput.Devices.XInput.SCPToolkit;
 using XOutput.Devices.XInput.Vigem;
 using XOutput.Diagnostics;
 using XOutput.Logging;
 using XOutput.Tools;
 using XOutput.UI.Component;
+using XOutput.UI.Shell;
 using XOutput.UpdateChecker;
 
 namespace XOutput.UI.Windows
@@ -90,7 +92,7 @@ namespace XOutput.UI.Windows
                 logger.Warning("Loading settings was unsuccessful.");
                 string error = string.Format(Translate("LoadSettingsError"), SettingsFilePath) + Environment.NewLine + ex.Message;
                 log(error);
-                MessageBox.Show(error, Translate("Warning"));
+                ShellViewModel.Instance?.ShowMessage(Translate("Warning"), error);
             }
             if (settings.HidGuardianEnabled)
             {
@@ -110,7 +112,7 @@ namespace XOutput.UI.Windows
                 catch (Exception ex)
                 {
                     logger.Error(ex);
-                    MessageBox.Show(ex.ToString());
+                    ShellViewModel.Instance?.ShowMessage(Translate("Error"), ex.ToString());
                 }
             }
             bool vigem = VigemDevice.IsAvailable();
@@ -138,10 +140,11 @@ namespace XOutput.UI.Windows
                     string error = Translate("VigemAndScpNotInstalled");
                     log(error);
                     installed = false;
-                    MessageBox.Show(error, Translate("Error"));
+                    ShellViewModel.Instance?.ShowMessage(Translate("Error"), error);
                 }
             }
             Model.Settings = settings;
+            Model.BackendName = vigem ? "ViGEm" : scp ? "SCPToolkit" : "";
             RefreshGameControllers();
 
             timer.Interval = TimeSpan.FromMilliseconds(5000);
@@ -180,13 +183,13 @@ namespace XOutput.UI.Windows
                 logger.Warning(ex);
                 string error = string.Format(Translate("SaveSettingsError"), SettingsFilePath) + Environment.NewLine + ex.Message;
                 log(error);
-                MessageBox.Show(error, Translate("Warning"));
+                ShellViewModel.Instance?.ShowMessage(Translate("Warning"), error);
             }
         }
 
         public void AboutPopupShow()
         {
-            MessageBox.Show(Translate("AboutContent") + Environment.NewLine + string.Format(Translate("Version"), UpdateChecker.Version.AppVersion), Translate("AboutMenu"));
+            ShellViewModel.Instance?.OpenAbout();
         }
 
         public void VersionCompare(VersionCompare compare)
@@ -215,7 +218,7 @@ namespace XOutput.UI.Windows
 
         public void RefreshGameControllers()
         {
-            IEnumerable<SharpDX.DirectInput.DeviceInstance> instances = directInputDevices.GetInputDevices(Model.AllDevices);
+            IEnumerable<Vortice.DirectInput.DeviceInstance> instances = directInputDevices.GetInputDevices(Model.AllDevices);
 
             bool changed = false;
             foreach (var inputView in Model.Inputs.ToArray())
@@ -255,6 +258,20 @@ namespace XOutput.UI.Windows
                 }
                 Controllers.Instance.Update(InputDevices.Instance.GetDevices());
             }
+        }
+
+        /// <summary>
+        /// Opens the Add Controller wizard for a brand-new mapper. The controller
+        /// is only created when the wizard completes (or the user saves).
+        /// </summary>
+        public void OpenAddControllerWizard()
+        {
+            var mapper = new InputMapper { Id = Guid.NewGuid().ToString(), Name = "Controller" };
+            foreach (var type in XInputHelper.Instance.Values)
+            {
+                mapper.SetMapping(type, new MapperDataCollection(new MapperData()));
+            }
+            ShellViewModel.Instance?.OpenWizard(InputDevices.Instance.GetDevices(), mapper, XInputHelper.Instance.Values.ToArray(), true, () => AddController(mapper));
         }
 
         public void AddController(InputMapper mapper)
@@ -304,20 +321,12 @@ namespace XOutput.UI.Windows
 
         public void OpenSettings()
         {
-            ApplicationContext context = ApplicationContext.Global.WithSingletons(settings);
-            SettingsWindow settingsWindow = context.Resolve<SettingsWindow>();
-            settingsWindow.ShowDialog();
+            ShellViewModel.Instance?.OpenSettings();
         }
 
         public void OpenDiagnostics()
         {
-            IList<IDiagnostics> elements = InputDevices.Instance.GetDevices()
-                .Select(d => new InputDiagnostics(d)).OfType<IDiagnostics>().ToList();
-            elements.Insert(0, new Devices.XInput.XInputDiagnostics());
-
-            ApplicationContext context = ApplicationContext.Global.WithSingletons(new DiagnosticsModel(elements));
-            DiagnosticsWindow diagnosticsWindow = context.Resolve<DiagnosticsWindow>();
-            diagnosticsWindow.ShowDialog();
+            ShellViewModel.Instance?.OpenDiagnostics();
         }
 
         private string Translate(string key)

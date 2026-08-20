@@ -1,0 +1,183 @@
+<UserControl x:Class="XOutput.UI.Shell.MainShellView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:shell="clr-namespace:XOutput.UI.Shell"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=shell:ShellViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="700" d:DesignWidth="940">
+
+    <UserControl.Resources>
+        <!-- Sidebar navigation item container -->
+        <Style x:Key="NavItemContainerStyle" TargetType="ListBoxItem">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushOnSurfaceVariant}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Indicator" Grid.Column="0" Background="{StaticResource BrushPrimary}"
+                                Width="3" HorizontalAlignment="Left" Visibility="Collapsed"/>
+                        <Border x:Name="ItemBg" Grid.Column="1" Background="Transparent" CornerRadius="8"
+                                Margin="0,2,12,2">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                                <Path Data="{Binding Icon}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                                      StrokeThickness="2" StrokeLineJoin="Round" StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round" Width="20" Height="20" Stretch="Uniform"/>
+                                <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                                           FontFamily="{StaticResource FontInter}" FontSize="14"
+                                           FontWeight="SemiBold">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource DynamicLanguageConverter}">
+                                            <Binding Path="LanguageModel.Data"/>
+                                            <Binding Path="LabelKey"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Indicator" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ItemBg" Property="Background" Value="{StaticResource BrushNavActiveBackground}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BrushPrimary}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ItemBg" Property="Background" Value="{StaticResource BrushSurfaceContainerHigh}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= Menu bar ================= -->
+        <Menu Grid.Row="0" Background="{StaticResource BrushSurfaceContainer}">
+            <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='FileMenu'}">
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SaveMenu'}" Click="SaveClick"/>
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='GameControllersMenu'}" Click="GameControllersClick"/>
+                <Separator/>
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ExitMenu'}" Click="ExitClick"/>
+            </MenuItem>
+            <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ToolsMenu'}">
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SettingsMenu'}" Click="SettingsClick"/>
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='DiagnosticsMenu'}" Click="DiagnosticsClick"/>
+            </MenuItem>
+            <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HelpMenu'}">
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='AboutMenu'}" Click="AboutClick"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- ================= Body: sidebar + content ================= -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <Border Grid.Column="0" Background="{StaticResource BrushSurfaceContainerLow}"
+                    BorderBrush="{StaticResource BrushOutlineVariant}" BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="XOutput" Margin="20,16,0,8"
+                               FontFamily="{StaticResource FontInter}" FontSize="18" FontWeight="Bold"
+                               Foreground="{StaticResource BrushOnSurface}"/>
+                    <ListBox ItemsSource="{Binding NavItems}" SelectedItem="{Binding SelectedNavItem}"
+                             Background="Transparent" BorderThickness="0"
+                             ItemContainerStyle="{StaticResource NavItemContainerStyle}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                </DockPanel>
+            </Border>
+
+            <!-- Content area with console drawer -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" x:Name="DrawerRow"/>
+                </Grid.RowDefinitions>
+
+                <ContentControl Grid.Row="0" Content="{Binding CurrentPage}"/>
+
+                <GridSplitter x:Name="DrawerSplitter" Grid.Row="1" Height="4" HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center" ResizeBehavior="PreviousAndNext"
+                              DragCompleted="DrawerSplitterDragCompleted"
+                              Visibility="{Binding IsConsoleExpanded, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <!-- Console drawer -->
+                <Border Grid.Row="2" x:Name="DrawerBorder" Background="{StaticResource BrushSurfaceContainer}"
+                        BorderBrush="{StaticResource BrushOutlineVariant}" BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <DockPanel Grid.Row="0" Height="32" Background="{StaticResource BrushSurfaceContainerHigh}">
+                            <Button x:Name="CollapseButton" DockPanel.Dock="Right" Width="32" Height="32"
+                                    Click="ToggleConsoleClick" Background="Transparent" BorderThickness="0"
+                                    Padding="0" Cursor="Hand" ToolTip="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ConsoleTitle'}">
+                                <Grid>
+                                    <Path x:Name="ChevronDown" Data="{StaticResource IconChevronDown}" Stroke="{StaticResource BrushOnSurfaceVariant}"
+                                          StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Path x:Name="ChevronUp" Data="{StaticResource IconChevronUp}" Stroke="{StaticResource BrushOnSurfaceVariant}"
+                                          StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
+                            </Button>
+                            <Button x:Name="CopyButton" DockPanel.Dock="Right" Width="32" Height="32"
+                                    Click="CopyLogClick" Background="Transparent" BorderThickness="0"
+                                    Padding="0" Cursor="Hand"
+                                    ToolTip="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='CopyLog'}">
+                                <Path Data="{StaticResource IconCopy}"
+                                      Stroke="{StaticResource BrushOnSurfaceVariant}" StrokeThickness="2"
+                                      StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                      Width="16" Height="16" Stretch="Uniform"/>
+                            </Button>
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                                       Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ConsoleTitle'}"
+                                       Style="{StaticResource TextTitleSm}" Foreground="{StaticResource BrushPrimary}"/>
+                        </DockPanel>
+                        <TextBox x:Name="logBox" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="True"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 FontFamily="{StaticResource FontJetBrainsMono}" FontSize="13" FontWeight="Medium"
+                                 Background="Transparent" BorderThickness="0" Padding="12,6"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ================= Overlay host (full-bleed, last child = top z-order) ================= -->
+        <Grid Grid.RowSpan="2"
+              Visibility="{Binding HasActiveOverlay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <!-- ~60% black backdrop -->
+            <Border Background="{StaticResource BrushOverlayBackdrop}"/>
+            <!-- centered card -->
+            <Border MaxWidth="700" MaxHeight="680" Background="{StaticResource BrushSurfaceContainer}"
+                    BorderBrush="{StaticResource BrushOutlineVariant}" BorderThickness="1"
+                    CornerRadius="{StaticResource CornerRadiusLarge}" Padding="24"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.5" Color="{StaticResource ColorShadow}"/>
+                </Border.Effect>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ContentPresenter Content="{Binding ActiveOverlay}"/>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

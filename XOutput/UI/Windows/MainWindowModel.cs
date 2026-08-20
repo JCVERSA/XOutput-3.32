@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using XOutput.UI.Component;
 
 namespace XOutput.UI.Windows
@@ -51,5 +51,38 @@ namespace XOutput.UI.Windows
 
         private readonly ObservableCollection<ControllerView> controllers = new ObservableCollection<ControllerView>();
         public ObservableCollection<ControllerView> Controllers { get { return controllers; } }
+
+        /// <summary>
+        /// Gets the number of detected input devices (presentation badge).
+        /// </summary>
+        public int InputCount => inputs.Count;
+
+        /// <summary>
+        /// Gets the number of virtual controllers (presentation badge).
+        /// </summary>
+        public int ControllerCount => controllers.Count;
+
+        private string backendName = "";
+        /// <summary>
+        /// Gets or sets the emulation backend name (ViGEm / SCP Toolkit).
+        /// </summary>
+        public string BackendName
+        {
+            get => backendName;
+            set
+            {
+                if (backendName != value)
+                {
+                    backendName = value;
+                    OnPropertyChanged(nameof(BackendName));
+                }
+            }
+        }
+
+        public MainWindowModel()
+        {
+            inputs.CollectionChanged += (sender, e) => OnPropertyChanged(nameof(InputCount));
+            controllers.CollectionChanged += (sender, e) => OnPropertyChanged(nameof(ControllerCount));
+        }
     }
 }

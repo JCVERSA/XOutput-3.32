@@ -1,48 +1,58 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using XOutput.Devices;
+using XOutput.UI.Windows;
 
-namespace XOutput.UI.Windows
+namespace XOutput.UI.Shell.Pages
 {
     /// <summary>
-    /// Interaction logic for ControllerSettings.xaml
+    /// Controller test page (formerly ControllerSettingsWindow): per-controller
+    /// mapping editor with live XInput test values.
     /// </summary>
-    public partial class ControllerSettingsWindow : Window, IViewBase<ControllerSettingsViewModel, ControllerSettingsModel>
+    public partial class ControllerTestPage : UserControl, IViewBase<ControllerSettingsViewModel, ControllerSettingsModel>
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private readonly ControllerSettingsViewModel viewModel;
-        public ControllerSettingsViewModel ViewModel => viewModel;
         private readonly GameController controller;
+        public ControllerSettingsViewModel ViewModel => viewModel;
 
-        public ControllerSettingsWindow(ControllerSettingsViewModel viewModel, GameController controller)
+        public ControllerTestPage(ControllerSettingsViewModel viewModel, GameController controller)
         {
             this.controller = controller;
             this.viewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
+            if (viewModel == null || controller == null)
+            {
+                Content.Visibility = Visibility.Collapsed;
+                EmptyState.Visibility = Visibility.Visible;
+            }
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
+            if (viewModel == null)
+            {
+                return;
+            }
             viewModel.Update();
             timer.Interval = TimeSpan.FromMilliseconds(10);
             timer.Tick += TimerTick;
             timer.Start();
         }
 
-        private void TimerTick(object sender, EventArgs e)
-        {
-            viewModel.Update();
-        }
-
-        protected override void OnClosed(EventArgs e)
+        private void WindowUnloaded(object sender, RoutedEventArgs e)
         {
             timer.Tick -= TimerTick;
             timer.Stop();
-            viewModel.Dispose();
-            base.OnClosed(e);
+            viewModel?.Dispose();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            viewModel.Update();
         }
 
         private void ConfigureAllButtonClick(object sender, RoutedEventArgs e)

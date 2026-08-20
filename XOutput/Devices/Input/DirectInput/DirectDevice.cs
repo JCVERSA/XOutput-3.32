@@ -1,6 +1,5 @@
-﻿using Microsoft.Win32;
-using SharpDX;
-using SharpDX.DirectInput;
+using Microsoft.Win32;
+using SharpGen.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
+using Vortice.DirectInput;
 using XOutput.Logging;
 using XOutput.Tools;
 
@@ -105,7 +105,7 @@ namespace XOutput.Devices.Input.DirectInput
 
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(DirectDevice));
         private readonly DeviceInstance deviceInstance;
-        private readonly Joystick joystick;
+        private readonly IDirectInputDevice8 joystick;
         private readonly DirectInputSource[] sources;
         private readonly DeviceState state;
         private readonly EffectInfo force;
@@ -119,9 +119,9 @@ namespace XOutput.Devices.Input.DirectInput
         /// <summary>
         /// Creates a new DirectDevice instance.
         /// </summary>
-        /// <param name="deviceInstance">SharpDX instanse</param>
-        /// <param name="joystick">SharpDX joystick</param>
-        public DirectDevice(DeviceInstance deviceInstance, Joystick joystick)
+        /// <param name="deviceInstance">Vortice instance</param>
+        /// <param name="joystick">Vortice joystick device</param>
+        public DirectDevice(DeviceInstance deviceInstance, IDirectInputDevice8 joystick)
         {
             this.deviceInstance = deviceInstance;
             this.joystick = joystick;
@@ -145,13 +145,13 @@ namespace XOutput.Devices.Input.DirectInput
             joystick.Properties.AxisMode = DeviceAxisMode.Absolute;
             try
             {
-                joystick.SetCooperativeLevel(new WindowInteropHelper(Application.Current.MainWindow).Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+                joystick.SetCooperativeLevel(new WindowInteropHelper(Application.Current.MainWindow).Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive).CheckError();
             }
             catch(Exception)
             {
                 logger.Warning($"Failed to set cooperative level to exclusive for {ToString()}");
             }
-            joystick.Acquire();
+            joystick.Acquire().CheckError();
             if (deviceInstance.ForceFeedbackDriverGuid != Guid.Empty)
             {
                 var constantForce = joystick.GetEffects().FirstOrDefault(x => x.Guid == EffectGuid.ConstantForce);
@@ -293,7 +293,7 @@ namespace XOutput.Devices.Input.DirectInput
             {
                 try
                 {
-                    joystick.Poll();
+                    joystick.Poll().CheckError();
                     for (int i = 0; i < state.DPads.Count(); i++)
                     {
                         state.SetDPad(i, GetDPadValue(i));
@@ -445,7 +445,7 @@ namespace XOutput.Devices.Input.DirectInput
                     properties.DeadZone = 0;
                     properties.Saturation = 10000;
                 }
-                catch (SharpDXException ex)
+                catch (SharpGenException ex)
                 {
                     logger.Error(ex);
                 }
@@ -470,7 +470,7 @@ namespace XOutput.Devices.Input.DirectInput
         {
             try
             {
-                return joystick.GetCurrentState();
+                return joystick.GetCurrentJoystickState();
             }
             catch (Exception)
             {

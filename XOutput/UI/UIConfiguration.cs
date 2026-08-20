@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,23 +42,11 @@ namespace XOutput.UI
             return new SettingsViewModel(model);
         }
 
-        [ResolverMethod(false)]
-        public static SettingsWindow GetSettingsWindow(SettingsViewModel viewModel)
-        {
-            return new SettingsWindow(viewModel);
-        }
-
 
         [ResolverMethod(false)]
         public static DiagnosticsViewModel GetDiagnosticsViewModel(DiagnosticsModel model)
         {
             return new DiagnosticsViewModel(model);
-        }
-
-        [ResolverMethod(false)]
-        public static DiagnosticsWindow GetDiagnosticsWindow(DiagnosticsViewModel viewModel)
-        {
-            return new DiagnosticsWindow(viewModel);
         }
     }
 }

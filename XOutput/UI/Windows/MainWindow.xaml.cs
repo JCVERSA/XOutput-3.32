@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -36,6 +36,8 @@ namespace XOutput.UI.Windows
             }
             new WindowInteropHelper(this).EnsureHandle();
             InitializeComponent();
+            ShellView.Initialize(viewModel);
+            ShellView.ExitRequested += () => ExitClick(this, null);
             viewModel.Initialize(Log);
             Dispatcher.Invoke(Initialize);
         }
@@ -61,29 +63,9 @@ namespace XOutput.UI.Windows
 
         public void Log(string msg)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                try
-                {
-                    logBox.AppendText(msg + Environment.NewLine);
-                }
-                catch (Exception ex)
-                {
-                    logger.Error("Cannot log into the log box: " + msg + Environment.NewLine);
-                    logger.Error(ex);
-                }
-            }));
+            ShellView.Log(msg);
         }
 
-        private void AddControllerClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.AddController(null);
-        }
-
-        private void RefreshClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.RefreshGameControllers();
-        }
         private void ExitClick(object sender, RoutedEventArgs e)
         {
             hardExit = true;
@@ -96,31 +78,6 @@ namespace XOutput.UI.Windows
                 logger.Info("The application will exit.");
                 Application.Current.Shutdown();
             }
-
-        }
-        private void GameControllersClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.OpenWindowsGameControllerSettings();
-        }
-
-        private void SaveClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.SaveSettings();
-        }
-
-        private void SettingsClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.OpenSettings();
-        }
-
-        private void DiagnosticsClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.OpenDiagnostics();
-        }
-
-        private void AboutClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.AboutPopupShow();
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -139,11 +96,6 @@ namespace XOutput.UI.Windows
         {
             viewModel.Dispose();
             await logger.Info("The application will exit.");
-        }
-
-        private void CheckBoxChecked(object sender, RoutedEventArgs e)
-        {
-            viewModel.RefreshGameControllers();
         }
 
         private void TaskbarIconTrayMouseDoubleClick(object sender, RoutedEventArgs e)

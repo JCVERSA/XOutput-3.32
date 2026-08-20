@@ -1,0 +1,85 @@
+<UserControl x:Class="XOutput.UI.Shell.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:XOutput.UI.Windows"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=local:SettingsViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="520" d:DesignWidth="700">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="16,8,16,16">
+
+            <!-- General -->
+            <Border Background="{StaticResource BrushSurfaceContainer}"
+                    BorderBrush="{StaticResource BrushOutlineVariant}" BorderThickness="1"
+                    CornerRadius="{StaticResource CornerRadiusDefault}" Padding="20,16" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='General'}"
+                               Style="{StaticResource TextTitleSm}" Margin="0,0,0,14"/>
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Language'}"
+                                   Style="{StaticResource TextBodyBase}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Column="1" Width="220" Height="28" HorizontalAlignment="Right"
+                                  ItemsSource="{Binding Model.Languages}" SelectedItem="{Binding Model.SelectedLanguage}"/>
+                    </Grid>
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='CloseToTray'}"
+                                   Style="{StaticResource TextBodyBase}" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  IsChecked="{Binding Model.CloseToTray}"/>
+                    </Grid>
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='RunAtStartup'}"
+                                   Style="{StaticResource TextBodyBase}" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  IsChecked="{Binding Model.RunAtStartup}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- System -->
+            <Border Background="{StaticResource BrushSurfaceContainer}"
+                    BorderBrush="{StaticResource BrushOutlineVariant}" BorderThickness="1"
+                    CornerRadius="{StaticResource CornerRadiusDefault}" Padding="20,16">
+                <StackPanel>
+                    <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='System'}"
+                               Style="{StaticResource TextTitleSm}" Margin="0,0,0,14"/>
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HidGuardianEnabled'}"
+                                   Style="{StaticResource TextBodyBase}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        <CheckBox Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  IsChecked="{Binding Model.HidGuardianEnabled}"/>
+                    </Grid>
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='DisableAutoRefresh'}"
+                                   Style="{StaticResource TextBodyBase}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        <CheckBox Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  IsChecked="{Binding Model.DisableAutoRefresh}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

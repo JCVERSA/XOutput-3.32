@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using XOutput.Devices;
 using XOutput.Devices.XInput;
 
@@ -91,6 +91,48 @@ namespace XOutput.UI.Windows
                 {
                     timerVisibility = value;
                     OnPropertyChanged(nameof(TimerVisibility));
+                }
+            }
+        }
+
+        private int stepIndex;
+        public int StepIndex
+        {
+            get => stepIndex;
+            set
+            {
+                if (stepIndex != value)
+                {
+                    stepIndex = value;
+                    OnPropertyChanged(nameof(StepIndex));
+                }
+            }
+        }
+
+        private int stepCount;
+        public int StepCount
+        {
+            get => stepCount;
+            set
+            {
+                if (stepCount != value)
+                {
+                    stepCount = value;
+                    OnPropertyChanged(nameof(StepCount));
+                }
+            }
+        }
+
+        private string stepText;
+        public string StepText
+        {
+            get => stepText;
+            set
+            {
+                if (stepText != value)
+                {
+                    stepText = value;
+                    OnPropertyChanged(nameof(StepText));
                 }
             }
         }

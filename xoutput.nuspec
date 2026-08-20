@@ -8,11 +8,11 @@
         <authors>csutorasa</authors>
         <projectUrl>https://github.com/csutorasa/XOutput</projectUrl>
         <dependencies>
-            <dependency id="dotnet4.5.2" />
+            <dependency id="dotnet-desktopruntime" />
         </dependencies>
     </metadata>
     
     <files>
-        <file src="XOutput\bin\Release\net452\XOutput.exe" />
+        <file src="XOutput\bin\Release\net9.0-windows\*" />
     </files>
 </package>

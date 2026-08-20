@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Windows.Media;
 using System.Windows.Threading;
 using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Tools;
+using XOutput.UI.Shell;
 using XOutput.UI.Windows;
 
 namespace XOutput.UI.Component
@@ -18,7 +19,7 @@ namespace XOutput.UI.Component
         {
             this.isAdmin = isAdmin;
             Model.Device = device;
-            Model.Background = Brushes.White;
+            Model.Background = ThemeHelper.GetBrush("BrushSurfaceContainerLow");
             Model.Device.InputChanged += InputDevice_InputChanged;
             timer.Interval = TimeSpan.FromMilliseconds(BackgroundDelayMS);
             timer.Tick += Timer_Tick;
@@ -26,9 +27,7 @@ namespace XOutput.UI.Component
 
         public void Edit()
         {
-            HidGuardianManager hidGuardianManager = ApplicationContext.Global.Resolve<HidGuardianManager>();
-            var controllerSettingsWindow = new InputSettingsWindow(new InputSettingsViewModel(new InputSettingsModel(), hidGuardianManager, Model.Device, isAdmin), Model.Device);
-            controllerSettingsWindow.ShowDialog();
+            ShellViewModel.Instance?.OpenMapping(Model.Device, isAdmin);
         }
 
         public void Dispose()
@@ -39,12 +38,12 @@ namespace XOutput.UI.Component
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Model.Background = Brushes.White;
+            Model.Background = ThemeHelper.GetBrush("BrushSurfaceContainerLow");
         }
 
         private void InputDevice_InputChanged(object sender, DeviceInputChangedEventArgs e)
         {
-            Model.Background = Brushes.LightGreen;
+            Model.Background = ThemeHelper.GetBrush("BrushInputActive");
             timer.Stop();
             timer.Start();
         }

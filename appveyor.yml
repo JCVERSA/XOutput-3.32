@@ -20,7 +20,7 @@ environment:
   sonarcloudtoken:
     secure: VMTLc0vSBXvIH5sBuyKY6ri8IL3I5kYpXnCK3xYPkfXK0+tFnIwlotzE3Gn5Yu4u
 
-image: Visual Studio 2019
+image: Visual Studio 2022
 
 init:
   - git config --global core.autocrlf input
@@ -39,13 +39,12 @@ build_script:
   - dotnet tool install --global dotnet-sonarscanner
   - dotnet sonarscanner begin /k:"XOutput" /d:"sonar.host.url=https://sonarcloud.io" /o:"csutorasa" /d:"sonar.login=%sonarcloudtoken%" /d:sonar.cs.opencover.reportsPaths="XOutputTests\coverage.opencover.xml" /d:sonar.coverage.exclusions="**Tests*.cs"
   - dotnet msbuild -p:Configuration=Release -p:Version=%versionnumber% -p:AssemblyVersion=%versionnumber% -p:FileVersion=%versionnumber%
-#  - dotnet build -c Release -p:Version=%versionnumber% -p:AssemblyVersion=%versionnumber% -p:FileVersion=%versionnumber%
 
 before_build:
   - dotnet restore
   
 after_build:
-  - 7z a XOutput.zip %APPVEYOR_BUILD_FOLDER%\XOutput\bin\Release\net452\*.exe
+  - 7z a XOutput.zip %APPVEYOR_BUILD_FOLDER%\XOutput\bin\Release\net9.0-windows\*
 
 #---------------------------------#
 #       tests configuration       #

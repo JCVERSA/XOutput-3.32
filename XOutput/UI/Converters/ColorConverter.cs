@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,58 +13,58 @@ namespace XOutput.UI.Converters
     /// </summary>
     public class ColorConverter : IMultiValueConverter
     {
-        protected static readonly Brush HighlightBrush = CreateBrush(255, 0, 0);
-        protected static readonly Brush HighlightBackBrush = CreateBrush(128, 0, 0);
-        protected static readonly Brush HighlightLabelBrush = CreateBrush(255, 255, 255);
-        protected static readonly Brush DPadBackBrush = CreateBrush(134, 134, 134);
+        protected static readonly Brush HighlightBrush = ThemeHelper.GetBrush("BrushXboxHighlight");
+        protected static readonly Brush HighlightBackBrush = ThemeHelper.GetBrush("BrushXboxHighlightBack");
+        protected static readonly Brush HighlightLabelBrush = ThemeHelper.GetBrush("BrushXboxHighlightLabel");
+        protected static readonly Brush DPadBackBrush = ThemeHelper.GetBrush("BrushXboxDPadBack");
         protected Dictionary<XInputTypes, Brush> foregroundColors = new Dictionary<XInputTypes, Brush>();
         protected Dictionary<XInputTypes, Brush> backgroundColors = new Dictionary<XInputTypes, Brush>();
         protected Dictionary<XInputTypes, Brush> labelColors = new Dictionary<XInputTypes, Brush>();
 
         public ColorConverter()
         {
-            foregroundColors.Add(XInputTypes.A, CreateBrush(53, 217, 0));
-            backgroundColors.Add(XInputTypes.A, CreateBrush(36, 149, 0));
-            labelColors.Add(XInputTypes.A, CreateBrush(173, 255, 146));
-            foregroundColors.Add(XInputTypes.B, CreateBrush(255, 19, 3));
-            backgroundColors.Add(XInputTypes.B, CreateBrush(171, 11, 0));
-            labelColors.Add(XInputTypes.B, CreateBrush(255, 161, 155));
-            foregroundColors.Add(XInputTypes.X, CreateBrush(14, 82, 255));
-            backgroundColors.Add(XInputTypes.X, CreateBrush(0, 50, 176));
-            labelColors.Add(XInputTypes.X, CreateBrush(133, 167, 255));
-            foregroundColors.Add(XInputTypes.Y, CreateBrush(255, 232, 35));
-            backgroundColors.Add(XInputTypes.Y, CreateBrush(217, 195, 0));
-            labelColors.Add(XInputTypes.Y, CreateBrush(255, 249, 193));
-            foregroundColors.Add(XInputTypes.L1, CreateBrush(255, 248, 248));
-            backgroundColors.Add(XInputTypes.L1, CreateBrush(241, 241, 241));
-            labelColors.Add(XInputTypes.L1, CreateBrush(187, 187, 187));
-            foregroundColors.Add(XInputTypes.R1, CreateBrush(255, 248, 248));
-            backgroundColors.Add(XInputTypes.R1, CreateBrush(241, 241, 241));
-            labelColors.Add(XInputTypes.R1, CreateBrush(187, 187, 187));
-            foregroundColors.Add(XInputTypes.L2, CreateBrush(248, 248, 248));
-            backgroundColors.Add(XInputTypes.L2, CreateBrush(187, 187, 187));
-            labelColors.Add(XInputTypes.L2, CreateBrush(187, 187, 187));
-            foregroundColors.Add(XInputTypes.R2, CreateBrush(248, 248, 248));
-            backgroundColors.Add(XInputTypes.R2, CreateBrush(187, 187, 187));
-            labelColors.Add(XInputTypes.R2, CreateBrush(187, 187, 187));
-            foregroundColors.Add(XInputTypes.L3, CreateBrush(153, 153, 153));
-            backgroundColors.Add(XInputTypes.L3, CreateBrush(134, 134, 134));
-            foregroundColors.Add(XInputTypes.R3, CreateBrush(153, 153, 153));
-            backgroundColors.Add(XInputTypes.R3, CreateBrush(134, 134, 134));
-            foregroundColors.Add(XInputTypes.Start, CreateBrush(241, 241, 241));
-            backgroundColors.Add(XInputTypes.Start, CreateBrush(217, 217, 217));
-            foregroundColors.Add(XInputTypes.Back, CreateBrush(241, 241, 241));
-            backgroundColors.Add(XInputTypes.Back, CreateBrush(217, 217, 217));
-            foregroundColors.Add(XInputTypes.Home, CreateBrush(202, 202, 202));
-            backgroundColors.Add(XInputTypes.Home, CreateBrush(119, 236, 0));
-            foregroundColors.Add(XInputTypes.UP, CreateBrush(153, 153, 153));
-            backgroundColors.Add(XInputTypes.UP, CreateBrush(134, 134, 134));
-            foregroundColors.Add(XInputTypes.DOWN, CreateBrush(153, 153, 153));
-            backgroundColors.Add(XInputTypes.DOWN, CreateBrush(134, 134, 134));
-            foregroundColors.Add(XInputTypes.LEFT, CreateBrush(153, 153, 153));
-            backgroundColors.Add(XInputTypes.LEFT, CreateBrush(134, 134, 134));
-            foregroundColors.Add(XInputTypes.RIGHT, CreateBrush(153, 153, 153));
-            backgroundColors.Add(XInputTypes.RIGHT, CreateBrush(134, 134, 134));
+            foregroundColors.Add(XInputTypes.A, ThemeHelper.GetBrush("BrushXboxA"));
+            backgroundColors.Add(XInputTypes.A, ThemeHelper.GetBrush("BrushXboxABack"));
+            labelColors.Add(XInputTypes.A, ThemeHelper.GetBrush("BrushXboxALabel"));
+            foregroundColors.Add(XInputTypes.B, ThemeHelper.GetBrush("BrushXboxB"));
+            backgroundColors.Add(XInputTypes.B, ThemeHelper.GetBrush("BrushXboxBBack"));
+            labelColors.Add(XInputTypes.B, ThemeHelper.GetBrush("BrushXboxBLabel"));
+            foregroundColors.Add(XInputTypes.X, ThemeHelper.GetBrush("BrushXboxX"));
+            backgroundColors.Add(XInputTypes.X, ThemeHelper.GetBrush("BrushXboxXBack"));
+            labelColors.Add(XInputTypes.X, ThemeHelper.GetBrush("BrushXboxXLabel"));
+            foregroundColors.Add(XInputTypes.Y, ThemeHelper.GetBrush("BrushXboxY"));
+            backgroundColors.Add(XInputTypes.Y, ThemeHelper.GetBrush("BrushXboxYBack"));
+            labelColors.Add(XInputTypes.Y, ThemeHelper.GetBrush("BrushXboxYLabel"));
+            foregroundColors.Add(XInputTypes.L1, ThemeHelper.GetBrush("BrushXboxBumper"));
+            backgroundColors.Add(XInputTypes.L1, ThemeHelper.GetBrush("BrushXboxBumperBack"));
+            labelColors.Add(XInputTypes.L1, ThemeHelper.GetBrush("BrushXboxBumperLabel"));
+            foregroundColors.Add(XInputTypes.R1, ThemeHelper.GetBrush("BrushXboxBumper"));
+            backgroundColors.Add(XInputTypes.R1, ThemeHelper.GetBrush("BrushXboxBumperBack"));
+            labelColors.Add(XInputTypes.R1, ThemeHelper.GetBrush("BrushXboxBumperLabel"));
+            foregroundColors.Add(XInputTypes.L2, ThemeHelper.GetBrush("BrushXboxTrigger"));
+            backgroundColors.Add(XInputTypes.L2, ThemeHelper.GetBrush("BrushXboxTriggerBack"));
+            labelColors.Add(XInputTypes.L2, ThemeHelper.GetBrush("BrushXboxTriggerLabel"));
+            foregroundColors.Add(XInputTypes.R2, ThemeHelper.GetBrush("BrushXboxTrigger"));
+            backgroundColors.Add(XInputTypes.R2, ThemeHelper.GetBrush("BrushXboxTriggerBack"));
+            labelColors.Add(XInputTypes.R2, ThemeHelper.GetBrush("BrushXboxTriggerLabel"));
+            foregroundColors.Add(XInputTypes.L3, ThemeHelper.GetBrush("BrushXboxStick"));
+            backgroundColors.Add(XInputTypes.L3, ThemeHelper.GetBrush("BrushXboxStickBack"));
+            foregroundColors.Add(XInputTypes.R3, ThemeHelper.GetBrush("BrushXboxStick"));
+            backgroundColors.Add(XInputTypes.R3, ThemeHelper.GetBrush("BrushXboxStickBack"));
+            foregroundColors.Add(XInputTypes.Start, ThemeHelper.GetBrush("BrushXboxStart"));
+            backgroundColors.Add(XInputTypes.Start, ThemeHelper.GetBrush("BrushXboxStartBack"));
+            foregroundColors.Add(XInputTypes.Back, ThemeHelper.GetBrush("BrushXboxStart"));
+            backgroundColors.Add(XInputTypes.Back, ThemeHelper.GetBrush("BrushXboxStartBack"));
+            foregroundColors.Add(XInputTypes.Home, ThemeHelper.GetBrush("BrushXboxHome"));
+            backgroundColors.Add(XInputTypes.Home, ThemeHelper.GetBrush("BrushXboxHomeBack"));
+            foregroundColors.Add(XInputTypes.UP, ThemeHelper.GetBrush("BrushXboxStick"));
+            backgroundColors.Add(XInputTypes.UP, ThemeHelper.GetBrush("BrushXboxStickBack"));
+            foregroundColors.Add(XInputTypes.DOWN, ThemeHelper.GetBrush("BrushXboxStick"));
+            backgroundColors.Add(XInputTypes.DOWN, ThemeHelper.GetBrush("BrushXboxStickBack"));
+            foregroundColors.Add(XInputTypes.LEFT, ThemeHelper.GetBrush("BrushXboxStick"));
+            backgroundColors.Add(XInputTypes.LEFT, ThemeHelper.GetBrush("BrushXboxStickBack"));
+            foregroundColors.Add(XInputTypes.RIGHT, ThemeHelper.GetBrush("BrushXboxStick"));
+            backgroundColors.Add(XInputTypes.RIGHT, ThemeHelper.GetBrush("BrushXboxStickBack"));
         }
 
         /// <summary>
@@ -131,7 +130,7 @@ namespace XOutput.UI.Converters
                     }
                 }
             }
-            return new SolidColorBrush(Colors.Black);
+            return ThemeHelper.GetBrush("BrushBackground");
         }
 
         /// <summary>
@@ -145,11 +144,6 @@ namespace XOutput.UI.Converters
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
-        }
-
-        protected static Brush CreateBrush(byte r, byte g, byte b)
-        {
-            return new SolidColorBrush(Color.FromRgb(r, g, b));
         }
     }
 }

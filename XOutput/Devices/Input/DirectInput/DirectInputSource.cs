@@ -1,5 +1,5 @@
-﻿using SharpDX.DirectInput;
 using System;
+using Vortice.DirectInput;
 
 namespace XOutput.Devices.Input.DirectInput
 {

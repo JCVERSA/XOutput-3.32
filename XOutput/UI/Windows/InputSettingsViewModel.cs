@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Threading;
 using XOutput.Devices;
@@ -99,6 +99,11 @@ namespace XOutput.UI.Windows
 
         public void Dispose()
         {
+            if (dispatcherTimer.IsEnabled)
+            {
+                dispatcherTimer.Stop();
+                device.SetForceFeedback(0, 0);
+            }
             Model.InputAxisViews.Clear();
             Model.InputButtonViews.Clear();
             Model.InputDPadViews.Clear();

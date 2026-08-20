@@ -1,11 +1,6 @@
-﻿using SharpDX;
-using SharpDX.DirectInput;
+using SharpGen.Runtime;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Windows;
-using System.Windows.Interop;
+using Vortice.DirectInput;
 using XOutput.Logging;
 
 namespace XOutput.Devices.Input.DirectInput
@@ -16,7 +11,7 @@ namespace XOutput.Devices.Input.DirectInput
     public class DirectDeviceForceFeedback : IDisposable
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(DirectDeviceForceFeedback));
-        private readonly Joystick joystick;
+        private readonly IDirectInputDevice8 joystick;
         private readonly EffectInfo force;
         private DeviceObjectInstance bigActuator;
         public DeviceObjectInstance BigActuator 
@@ -48,18 +43,18 @@ namespace XOutput.Devices.Input.DirectInput
         private int[] bigDirections;
         private int[] smallAxes;
         private int[] smallDirections;
-        private Effect bigEffect;
-        private Effect smallEffect;
+        private IDirectInputEffect bigEffect;
+        private IDirectInputEffect smallEffect;
         private readonly int gain;
         private readonly int samplePeriod;
         private int axisCount;
         
-        public DirectDeviceForceFeedback(Joystick joystick, EffectInfo force, DeviceObjectInstance actuator) : this(joystick, force, actuator, null)
+        public DirectDeviceForceFeedback(IDirectInputDevice8 joystick, EffectInfo force, DeviceObjectInstance actuator) : this(joystick, force, actuator, null)
         {
             
         }
         
-        public DirectDeviceForceFeedback(Joystick joystick, EffectInfo force, DeviceObjectInstance bigActuator, DeviceObjectInstance smallActuator)
+        public DirectDeviceForceFeedback(IDirectInputDevice8 joystick, EffectInfo force, DeviceObjectInstance bigActuator, DeviceObjectInstance smallActuator)
         {
             this.bigActuator = bigActuator;
             this.smallActuator = smallActuator;
@@ -97,7 +92,7 @@ namespace XOutput.Devices.Input.DirectInput
             }
         }
 
-        private Effect DoForceFeedback(Effect oldEffect, int[] axes, int[] directions, double value)
+        private IDirectInputEffect DoForceFeedback(IDirectInputEffect oldEffect, int[] axes, int[] directions, double value)
         {
             var effectParams = new EffectParameters
             {
@@ -117,12 +112,12 @@ namespace XOutput.Devices.Input.DirectInput
             effectParams.Parameters = cf;
             try
             {
-                var newEffect = new Effect(joystick, force.Guid, effectParams);
+                var newEffect = joystick.CreateEffect(force.Guid, effectParams);
                 oldEffect?.Dispose();
-                newEffect.Start();
+                newEffect.Start().CheckError();
                 return newEffect;
             }
-            catch (SharpDXException)
+            catch (SharpGenException)
             {
                 logger.Warning($"Failed to create and start effect for {ToString()}");
                 return null;

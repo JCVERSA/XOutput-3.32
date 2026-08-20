@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Kinetic Console — XOutput single-window shell preview</title>
+<style>
+  :root{
+    --bg:#0F150C; --low:#181D14; --container:#1B2117; --high:#262C21;
+    --highest:#31372C; --bright:#353B30; --on:#DFE5D5; --onvar:#BFCAB4;
+    --outline:#899480; --outlinevar:#404A39; --primary:#97F866;
+    --primaryc:#7CDB4D; --onprimaryc:#225D00; --primarychover:#95E26F;
+    --navactive:#1A7CDB4D;
+  }
+  @font-face{font-family:'Inter';font-weight:400;src:url('../XOutput/Resources/Fonts/Inter/Inter-Regular.ttf') format('truetype');}
+  @font-face{font-family:'Inter';font-weight:600;src:url('../XOutput/Resources/Fonts/Inter/Inter-SemiBold.ttf') format('truetype');}
+  @font-face{font-family:'Inter';font-weight:700;src:url('../XOutput/Resources/Fonts/Inter/Inter-Bold.ttf') format('truetype');}
+  @font-face{font-family:'JetBrains Mono';font-weight:500;src:url('../XOutput/Resources/Fonts/JetBrainsMono/JetBrainsMono-Medium.ttf') format('truetype');}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#05080A;color:var(--on);font-family:'Inter',Segoe UI,Arial,sans-serif;font-size:12px;padding:32px;display:flex;flex-direction:column;gap:20px;align-items:center;}
+  .notice{max-width:960px;text-align:center;color:#8aa;font-size:12px;line-height:1.6;}
+  .notice b{color:var(--onvar);}
+  .shell{background:var(--bg);border:1px solid #26301f;border-radius:12px;overflow:hidden;width:960px;box-shadow:0 12px 40px rgba(0,0,0,.6);}
+  .menubar{background:var(--container);display:flex;gap:2px;padding:2px 6px;border-bottom:1px solid var(--outlinevar);}
+  .menubar .item{padding:4px 10px;border-radius:6px;cursor:pointer;}
+  .menubar .item:hover{background:var(--high);}
+  .body{display:flex;height:640px;}
+  /* sidebar */
+  .sidebar{width:240px;background:var(--low);border-right:1px solid var(--outlinevar);display:flex;flex-direction:column;flex-shrink:0;}
+  .sidebar .brand{padding:16px 20px 8px;font-size:18px;font-weight:700;}
+  .nav{display:flex;flex-direction:column;gap:2px;padding:8px 0;}
+  .nav .item{height:44px;display:flex;align-items:center;gap:12px;padding-left:17px;margin-right:12px;border-radius:8px;color:var(--onvar);cursor:pointer;position:relative;font-weight:600;font-size:14px;}
+  .nav .item .bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--primary);display:none;border-radius:0 2px 2px 0;}
+  .nav .item.active{color:var(--primary);background:var(--navactive);}
+  .nav .item.active .bar{display:block;}
+  .nav .item:hover{background:var(--high);}
+  .nav .item svg{width:20px;height:20px;flex-shrink:0;}
+  .nav .item svg *{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  /* content */
+  .content{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .page{flex:1;padding:12px;display:flex;flex-direction:column;gap:12px;overflow:hidden;}
+  .card{background:var(--container);border:1px solid var(--outlinevar);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;}
+  .card h3{font-size:16px;font-weight:600;border-bottom:1px solid var(--outlinevar);padding-bottom:8px;}
+  .device{background:var(--low);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
+  .device .id{font-family:'JetBrains Mono',Consolas,monospace;font-size:10px;color:var(--onvar);}
+  .btn{background:var(--primaryc);color:var(--onprimaryc);font-weight:600;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:12px;}
+  .btn:hover{background:var(--primarychover);}
+  .btn.small{padding:4px 12px;}
+  .checkbox{display:flex;align-items:center;gap:8px;cursor:pointer;}
+  .checkbox .box{width:16px;height:16px;border-radius:4px;border:1px solid var(--primaryc);background:var(--primaryc);display:flex;align-items:center;justify-content:center;color:var(--onprimaryc);font-weight:700;font-size:11px;}
+  .row{display:flex;gap:10px;align-items:center;}
+  /* drawer */
+  .splitter{height:4px;background:var(--high);cursor:row-resize;flex-shrink:0;}
+  .drawer{background:var(--container);border-top:1px solid var(--outlinevar);display:flex;flex-direction:column;height:190px;flex-shrink:0;}
+  .drawer .head{height:32px;background:var(--high);display:flex;align-items:center;padding:0 8px 0 12px;gap:4px;}
+  .drawer .head .title{color:var(--primary);font-size:18px;font-weight:600;margin-right:auto;}
+  .iconbtn{width:32px;height:32px;background:transparent;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--onvar);}
+  .iconbtn:hover{background:var(--highest);}
+  .drawer .log{flex:1;padding:8px 12px;font-family:'JetBrains Mono',Consolas,monospace;font-size:13px;font-weight:500;color:var(--onvar);line-height:1.8;overflow:hidden;}
+  /* overlay demo */
+  .overlaywrap{position:relative;margin-top:-16px;}
+  .shell.overlaid .page, .shell.overlaid .drawer{filter:brightness(.5);}
+  .backdrop{position:absolute;inset:0;background:#99000000;border-radius:12px;display:flex;align-items:center;justify-content:center;z-index:5;}
+  .card.overlay{width:640px;max-height:640px;border-radius:16px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.6);}
+  .stepper{background:var(--high);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .stepper .s{font-size:11px;font-weight:700;letter-spacing:2.5px;color:var(--onvar);text-transform:uppercase;}
+  .wizprogress{width:200px;height:8px;background:var(--high);border-radius:4px;margin-bottom:8px;}
+  .wizprogress .fill{width:35%;height:100%;background:var(--primary);border-radius:4px;}
+  .wizrows{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;}
+  .wizrows .lbl{color:var(--on);padding:6px 0;}
+  .wizrows .val{color:var(--onvar);padding:6px 0;text-align:right;font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;}
+  .wizbtns{display:flex;gap:10px;margin-top:16px;}
+  .wizbtns .spacer{flex:1;}
+  .xbox{display:flex;align-items:center;justify-content:center;margin-top:12px;min-height:200px;}
+  .xbox svg{width:300px;}
+</style>
+</head>
+<body>
+<div class="notice">
+  <b>XOutput — single-window shell (Prompt 3 preview).</b> Browser mock of the new architecture using the exact Kinetic Console palette and font files: menu bar, 240&nbsp;px sidebar with 5 nav items, content area hosting pages, collapsible console drawer, and the in-shell wizard overlay. German strings. The WPF app itself runs on Windows; this page mirrors the shell so the restructure can be reviewed here. <b>Click "Konfiguration (alle)" to toggle the wizard overlay demo.</b>
+</div>
+
+<div class="shell" id="shell">
+  <div class="menubar">
+    <div class="item">Datei</div>
+    <div class="item">Werkzeuge</div>
+    <div class="item">Hilfe</div>
+  </div>
+  <div class="body">
+    <div class="sidebar">
+      <div class="brand">XOutput</div>
+      <div class="nav">
+        <div class="item active" data-page="home"><span class="bar"></span>
+          <svg viewBox="0 0 20 20"><path d="M4 10 L10 4 L16 10 M6 9 L6 16 L14 16 L14 9"/></svg> Startseite
+        </div>
+        <div class="item" data-page="test"><span class="bar"></span>
+          <svg viewBox="0 0 20 20"><path d="M4 8 C4 6.9 4.9 6 6 6 L14 6 C15.1 6 16 6.9 16 8 L16 12 C16 13.1 15.1 14 14 14 L6 14 C4.9 14 4 13.1 4 12 Z M7 9 L7 11 M6 10 L8 10 M13 9.5 L13 11.5 M12.25 10.5 L13.75 10.5"/></svg> Controller-Test
+        </div>
+        <div class="item" data-page="mapping"><span class="bar"></span>
+          <svg viewBox="0 0 20 20"><path d="M3 6 L15 6 M18 6 L20 6 M15 4 L15 8 M3 12 L7 12 M10 12 L20 12 M7 10 L7 14 M3 18 L16 18 M19 18 L20 18 M16 16 L16 20"/></svg> Zuordnung
+        </div>
+        <div class="item" data-page="diag"><span class="bar"></span>
+          <svg viewBox="0 0 20 20"><path d="M2 10 L6 10 L9 3 L13 17 L16 10 L20 10"/></svg> Diagnose
+        </div>
+        <div class="item" data-page="settings"><span class="bar"></span>
+          <svg viewBox="0 0 20 20"><path d="M10 6.8 A3.2 3.2 0 1 1 10 6.79 M10 2.5 L10 5 M10 15 L10 17.5 M2.5 10 L5 10 M15 10 L17.5 10 M4.7 4.7 L6.5 6.5 M13.5 13.5 L15.3 15.3 M4.7 15.3 L6.5 13.5 M13.5 6.5 L15.3 4.7"/></svg> Einstellungen
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="page" id="page-home">
+        <div class="card">
+          <h3>DirectInput</h3>
+          <label class="checkbox"><span class="box">✓</span> Alle Eingabegeräte anzeigen</label>
+          <div class="device"><div><div>Xbox 360 Controller</div><div class="id">XBox360-01</div></div><button class="btn small">Bearbeiten</button></div>
+          <div class="device"><div><div>Logitech G27 Racing Wheel</div><div class="id">USB#VID_046D#PID_C24F</div></div><button class="btn small">Bearbeiten</button></div>
+          <div class="row"><button class="btn">Aktualisierung erzwingen</button></div>
+        </div>
+        <div class="card">
+          <h3>Spielkontroller</h3>
+          <div class="device"><div><div>Xbox 360 Controller</div><div style="color:var(--primary)">Emulation läuft</div></div><div class="row"><button class="btn small">Start</button><button class="btn small">Bearbeiten</button></div></div>
+          <div class="row"><button class="btn">Add controller</button></div>
+        </div>
+      </div>
+      <div class="page" id="page-test" style="display:none">
+        <div class="card"><h3>Controller-Test / Mapping</h3><div style="color:var(--onvar)">Seite für einen ausgewählten Controller (Mapping-Achsen, XInput-Livetest, Konfiguration-alles-Assistent).</div></div>
+      </div>
+      <div class="page" id="page-mapping" style="display:none">
+        <div class="card"><h3>Zuordnung / Gerätetest</h3><div style="color:var(--onvar)">Live-Eingabetest, Force-Feedback-Test und HidGuardian für ein ausgewähltes Gerät.</div></div>
+      </div>
+      <div class="page" id="page-diag" style="display:none">
+        <div class="card"><h3>Diagnose</h3><div style="color:var(--onvar)">Diagnoseergebnisse (Achsen, Tasten, DPad, Force Feedback, Slider, ViGEm/SCP).</div></div>
+      </div>
+      <div class="page" id="page-settings" style="display:none">
+        <div class="card"><h3>Einstellungen</h3><div style="color:var(--onvar)">Sprache, Taskleiste, Autostart, HidGuardian, Auto-Refresh.</div></div>
+      </div>
+      <div class="splitter"></div>
+      <div class="drawer" id="drawer">
+        <div class="head">
+          <span class="title">Konsole</span>
+          <button class="iconbtn" title="Protokoll kopieren">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3 L12 3 L12 5 L16 5 L16 17 L6 17 Z M8 5 L8 15 L14 15 L14 7 L12 7 L12 5 Z"/></svg>
+          </button>
+          <button class="iconbtn" id="collapseBtn" title="Ein-/ausklappen">
+            <svg id="chevDown" width="10" height="10" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M0 0 L4 4 L8 0"/></svg>
+            <svg id="chevUp" width="10" height="10" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M0 4 L4 0 L8 4"/></svg>
+          </button>
+        </div>
+        <div class="log" id="logBox">[INFO ] XOutput 3.31 gestartet<br>[INFO ] ViGEm-Geräte werden verwendet.<br>[INFO ] Emulation gestartet auf Xbox 360 Controller.<br>[INFO ] Force-Feedback-Zuordnung verbunden.<br>[INFO ] Einstellungen erfolgreich geladen.</div>
+      </div>
+    </div>
+  </div>
+  <div class="backdrop" id="backdrop" style="display:none">
+    <div class="card overlay">
+      <div class="stepper"><span>Konfiguration (alle)</span><span class="s">Schritt 3 / 12</span></div>
+      <div class="wizprogress"><div class="fill"></div></div>
+      <div class="wizrows">
+        <div class="lbl">Warte auf Eingabe von</div><div class="val">RB</div>
+        <div class="lbl">Mindestwert</div><div class="val">0</div>
+        <div class="lbl">Maximalwert</div><div class="val">100</div>
+        <div class="lbl">Ausgewählter Eingang</div><div class="val">R1</div>
+        <div class="lbl">Ausgewähltes Gerät</div><div class="val">Xbox 360 Controller</div>
+      </div>
+      <div class="wizbtns"><button class="btn">Deaktivieren</button><button class="btn">Speichern</button><span class="spacer"></span><button class="btn" id="wizCancel">Abbrechen</button></div>
+      <div class="xbox">
+        <svg viewBox="0 0 20 20"><path d="M3 10 L17 10 M10 3 L10 17" stroke="var(--outlinevar)" stroke-width="1"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.nav .item');
+  const pages = ['home','test','mapping','diag','settings'];
+  items.forEach(it => it.addEventListener('click', () => {
+    items.forEach(i => i.classList.remove('active'));
+    it.classList.add('active');
+    const p = it.dataset.page;
+    pages.forEach(k => document.getElementById('page-'+k).style.display = k === p ? 'flex' : 'none');
+  }));
+  document.getElementById('collapseBtn').addEventListener('click', () => {
+    const d = document.getElementById('drawer');
+    const collapsed = d.style.height === '32px';
+    d.style.height = collapsed ? '190px' : '32px';
+    d.querySelector('.log').style.display = collapsed ? '' : 'none';
+    document.getElementById('chevDown').style.display = collapsed ? '' : 'none';
+    document.getElementById('chevUp').style.display = collapsed ? 'none' : '';
+  });
+  let overlaid = false;
+  function toggleOverlay(show){
+    overlaid = show;
+    document.getElementById('backdrop').style.display = show ? 'flex' : 'none';
+    document.getElementById('shell').classList.toggle('overlaid', show);
+  }
+  document.getElementById('wizCancel').addEventListener('click', () => toggleOverlay(false));
+  document.querySelector('.drawer .head .title').addEventListener('click', () => toggleOverlay(!overlaid));
+</script>
+</body>
+</html>

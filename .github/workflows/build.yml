@@ -1,32 +1,73 @@
 name: Build XOutput
 
-env:
-  VERSION: '3.31'
+# Builds XOutput (net9.0-windows) in Release and produces the executable
+# as a downloadable artifact. Framework-dependent (portable exe + dlls —
+# no RID pinning, no single-file/self-contained by design).
 
 on:
   push:
     branches: [ 3.x ]
   pull_request:
     branches: [ 3.x ]
+  workflow_dispatch:          # allow manual runs from the Actions tab
+
+env:
+  VERSION: '3.31'             # matches UpdateChecker/Version.cs AppVersion
+  DOTNET_VERSION: '9.0.x'
 
 jobs:
   build:
+    name: Build & publish exe (Release, net9.0-windows)
     runs-on: windows-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Clean
-      run: dotnet clean --configuration Release && dotnet nuget locals all --clear
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      shell: powershell
-      run: dotnet build -c Release -p:Version=$env:VERSION -p:AssemblyVersion=$env:VERSION -p:FileVersion=$env:VERSION
-    - name: Test
-      run: dotnet test -c Release --no-build
-    - name: Create package
-      uses: actions/upload-artifact@v2
-      with:
-        name: XOutput
-        path: ./XOutput/bin/Release/net452/XOutput.exe
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore XOutput.sln
+
+      - name: Build (Release)
+        shell: pwsh
+        run: |
+          dotnet build XOutput.sln -c Release `
+            -p:Version=$env:VERSION -p:AssemblyVersion=$env:VERSION -p:FileVersion=$env:VERSION
+
+      - name: Test
+        run: dotnet test XOutputTests/XOutputTests.csproj -c Release --no-build
+
+      - name: Publish executable (framework-dependent)
+        shell: pwsh
+        run: |
+          dotnet publish XOutput/XOutput.csproj -c Release `
+            -p:Version=$env:VERSION -p:AssemblyVersion=$env:VERSION -p:FileVersion=$env:VERSION `
+            -o "${{ runner.temp }}/publish"
+
+      - name: Show output
+        shell: pwsh
+        run: Get-ChildItem -Recurse "${{ runner.temp }}/publish" | Select-Object Name, Length
+
+      - name: Package zip
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "${{ runner.temp }}/publish/*" `
+            -DestinationPath "XOutput-$env:VERSION-net9.0-windows.zip" -Force
+
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XOutput-net9.0-windows
+          path: ${{ runner.temp }}/publish/**
+          if-no-files-found: error
+
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XOutput-${{ env.VERSION }}-net9.0-windows.zip
+          path: XOutput-${{ env.VERSION }}-net9.0-windows.zip
+          if-no-files-found: error

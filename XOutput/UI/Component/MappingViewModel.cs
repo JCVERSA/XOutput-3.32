@@ -1,8 +1,9 @@
-﻿using XOutput.Devices;
+using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Devices.Mapper;
 using XOutput.Devices.XInput;
 using XOutput.Tools;
+using XOutput.UI.Shell;
 using XOutput.UI.Windows;
 
 namespace XOutput.UI.Component
@@ -22,8 +23,7 @@ namespace XOutput.UI.Component
 
         public void Configure()
         {
-            new AutoConfigureWindow(new AutoConfigureViewModel(new AutoConfigureModel(), InputDevices.Instance.GetDevices(), controller.Mapper, new XInputTypes[] { Model.XInputType }), false).ShowDialog();
-            SetSelected(GetMapperData());
+            ShellViewModel.Instance?.OpenWizard(InputDevices.Instance.GetDevices(), controller.Mapper, new XInputTypes[] { Model.XInputType }, false, () => SetSelected(GetMapperData()));
         }
 
         public void Invert()

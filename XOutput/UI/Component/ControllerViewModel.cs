@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Windows.Media;
 using System.Windows.Threading;
 using XOutput.Devices;
+using XOutput.UI;
+using XOutput.UI.Shell;
 using XOutput.UI.Windows;
 
 namespace XOutput.UI.Component
@@ -19,7 +21,7 @@ namespace XOutput.UI.Component
             this.isAdmin = isAdmin;
             Model.Controller = controller;
             Model.ButtonText = "Start";
-            Model.Background = Brushes.White;
+            Model.Background = ThemeHelper.GetBrush("BrushSurfaceContainerLow");
             Model.Controller.XInput.InputChanged += InputDevice_InputChanged;
             timer.Interval = TimeSpan.FromMilliseconds(BackgroundDelayMS);
             timer.Tick += Timer_Tick;
@@ -27,8 +29,7 @@ namespace XOutput.UI.Component
 
         public void Edit()
         {
-            var controllerSettingsWindow = new ControllerSettingsWindow(new ControllerSettingsViewModel(new ControllerSettingsModel(), Model.Controller, isAdmin), Model.Controller);
-            controllerSettingsWindow.ShowDialog();
+            ShellViewModel.Instance?.OpenControllerTest(Model.Controller, isAdmin);
             Model.RefreshName();
         }
 
@@ -72,12 +73,12 @@ namespace XOutput.UI.Component
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Model.Background = Brushes.White;
+            Model.Background = ThemeHelper.GetBrush("BrushSurfaceContainerLow");
         }
 
         private void InputDevice_InputChanged(object sender, DeviceInputChangedEventArgs e)
         {
-            Model.Background = Brushes.LightGreen;
+            Model.Background = ThemeHelper.GetBrush("BrushInputActive");
             timer.Stop();
             timer.Start();
         }

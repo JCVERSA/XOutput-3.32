@@ -1,16 +1,17 @@
-﻿using System.Windows;
+using System.Windows.Controls;
+using XOutput.UI.Windows;
 
-namespace XOutput.UI.Windows
+namespace XOutput.UI.Shell.Pages
 {
     /// <summary>
-    /// Interaction logic for SettingsWindow.xaml
+    /// Settings page (formerly SettingsWindow).
     /// </summary>
-    public partial class SettingsWindow : Window, IViewBase<SettingsViewModel, SettingsModel>
+    public partial class SettingsPage : UserControl, IViewBase<SettingsViewModel, SettingsModel>
     {
         private readonly SettingsViewModel viewModel;
         public SettingsViewModel ViewModel => viewModel;
 
-        public SettingsWindow(SettingsViewModel viewModel)
+        public SettingsPage(SettingsViewModel viewModel)
         {
             this.viewModel = viewModel;
             DataContext = viewModel;

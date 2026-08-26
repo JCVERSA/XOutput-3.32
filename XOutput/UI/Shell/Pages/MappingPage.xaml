@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:shell="clr-namespace:XOutput.UI.Shell.Pages"
              xmlns:Components="clr-namespace:XOutput.UI.Component"
-             xmlns:xin="clr-namespace:XOutput.Devices.XInput"
+             xmlns:xin="clr-namespace:XOutput.Devices.XInput;assembly=XOutput.Core"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=shell:MappingPageViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="700" d:DesignWidth="700"

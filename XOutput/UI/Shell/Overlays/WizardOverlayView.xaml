@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Components="clr-namespace:XOutput.UI.Component"
-             xmlns:xin="clr-namespace:XOutput.Devices.XInput"
+             xmlns:xin="clr-namespace:XOutput.Devices.XInput;assembly=XOutput.Core"
              xmlns:local="clr-namespace:XOutput.UI.Windows"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=local:AutoConfigureViewModel, IsDesignTimeCreatable=False}"

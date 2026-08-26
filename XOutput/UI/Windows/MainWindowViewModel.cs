@@ -291,6 +291,34 @@ namespace XOutput.UI.Windows
             }
         }
 
+        /// <summary>
+        /// Starts every virtual controller that is not running yet.
+        /// </summary>
+        public void StartAllControllers()
+        {
+            foreach (var controllerView in Model.Controllers)
+            {
+                if (!controllerView.ViewModel.Model.Started)
+                {
+                    controllerView.ViewModel.Start();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Stops every running virtual controller.
+        /// </summary>
+        public void StopAllControllers()
+        {
+            foreach (var controllerView in Model.Controllers)
+            {
+                if (controllerView.ViewModel.Model.Started)
+                {
+                    controllerView.ViewModel.Stop();
+                }
+            }
+        }
+
         public void RemoveController(ControllerView controllerView)
         {
             var controller = controllerView.ViewModel.Model.Controller;

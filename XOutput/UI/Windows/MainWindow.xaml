@@ -17,6 +17,9 @@
                         TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleClick">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='StartAll'}" Click="StartAllClick"/>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='StopAll'}" Click="StopAllClick"/>
+                    <Separator/>
                     <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ExitMenu'}" Click="ExitClick"/>
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>

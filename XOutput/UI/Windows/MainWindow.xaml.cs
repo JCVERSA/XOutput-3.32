@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using XOutput.Devices.Input.DirectInput;
 using XOutput.Logging;
 using XOutput.Tools;
 
@@ -35,6 +36,9 @@ namespace XOutput.UI.Windows
                 logger.Info("Starting XOutput in normal window");
             }
             new WindowInteropHelper(this).EnsureHandle();
+            // Provide our window handle to the shared DirectInput layer (it is
+            // UI-framework-agnostic and cannot reference System.Windows itself).
+            DirectInputPlatform.HwndProvider = () => new WindowInteropHelper(this).Handle;
             InitializeComponent();
             ShellView.Initialize(viewModel);
             ShellView.ExitRequested += () => ExitClick(this, null);
@@ -64,6 +68,16 @@ namespace XOutput.UI.Windows
         public void Log(string msg)
         {
             ShellView.Log(msg);
+        }
+
+        private void StartAllClick(object sender, RoutedEventArgs e)
+        {
+            viewModel.StartAllControllers();
+        }
+
+        private void StopAllClick(object sender, RoutedEventArgs e)
+        {
+            viewModel.StopAllControllers();
         }
 
         private void ExitClick(object sender, RoutedEventArgs e)

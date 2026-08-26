@@ -65,6 +65,19 @@ namespace XOutput.UI.Component
             }
         }
 
+        /// <summary>
+        /// Stops the controller if it is running. The button state is reset by the
+        /// start callback once the emulation thread has exited (same behavior as
+        /// the stop branch of <see cref="StartStop"/>).
+        /// </summary>
+        public void Stop()
+        {
+            if (Model.Started)
+            {
+                Model.Controller.Stop();
+            }
+        }
+
         public void Dispose()
         {
             timer.Tick -= Timer_Tick;

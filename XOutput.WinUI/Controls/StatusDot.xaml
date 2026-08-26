@@ -1,0 +1,11 @@
+<UserControl
+    x:Class="XOutput.WinUI.Controls.StatusDot"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="10" Height="10">
+
+    <!-- Empty host: the dot itself is a compositor ShapeVisual (see code-behind),
+         so its color can be animated with a Composition ColorKeyFrameAnimation
+         on the compositor thread instead of an instant brush swap. -->
+    <Grid x:Name="DotHost"/>
+</UserControl>

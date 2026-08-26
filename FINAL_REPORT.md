@@ -86,3 +86,29 @@ dotnet build XOutput.sln -c Release -p:Version=3.31 -p:AssemblyVersion=3.31 -p:F
 dotnet test XOutputTests/XOutputTests.csproj -c Release
 ```
 Then run: confirm one taskbar entry; open wizard + Mapping page and verify the controller glow follows the configured input (blink in wizard, steady in Mapping); eyeball the new controller silhouette proportions; tray icon minimize/restore/exit; no binding errors in the debug output; FF + ViGEm end-to-end per Prompt 1 §7.
+
+---
+
+## Audit Phase 2 — implemented fixes (2026-08-20)
+
+Commit `b0755a8` (pushed to `arena/01a01cdd-xoutput-3-32`). Workflow bump (`VERSION 3.32` + vulnerability audit step) is commit `c93d…`-local-only — GitHub's App token cannot push `.github/workflows/*`; merge it via the UI or your machine.
+
+**High**
+- Mapping page no longer navigates home when an *unrelated* device unplugs; the disconnected tab is removed and its VM disposed (UI-thread marshaled). Navigates home only when the last physical device is gone.
+- Target mapper is re-resolved on every refresh tick, so edits keep working when controllers are added/removed while the page is open (no stale mapper writes).
+
+**Medium**
+- Settings save is atomic (temp file + `File.Replace`) — no corrupt settings.json on crash.
+- Console log box capped at 4000 lines / 300k chars.
+- Unhandled-exception handler is now synchronous, shows the themed overlay, and marks the exception handled (session survives transient UI errors; previously the async handler never rendered the overlay before shutdown).
+- UpdateChecker now queries this repo's GitHub Releases API (tag_name, `v`-stripped) with a 10 s timeout instead of the upstream repo's raw file.
+
+**Low / DX**
+- Version unified to **3.32** (`Version.cs`, workflow `VERSION`, nuspec).
+- About overlay re-localizes live on language change.
+- Page titles added to Settings and Controller Test pages.
+- Live-update timers 10 ms → 33 ms (~30 fps).
+- `.editorconfig` added; `appveyor.yml` removed (GitHub Actions is canonical); dev `preview-artifacts/` untracked + gitignored.
+- New unit tests: `RatioScaleConverter`, `RatioToPositionConverter`, `BoolToDoubleConverter`, `SourceToVidPidConverter`, `ShellNavItem` (pure, run on CI).
+
+**Deferred / cannot verify in sandbox:** XBox silhouette eyeball and hardware-dependent behavior (FF, ViGEm) still need a Windows pass; `Mappers[0]` TODOs remain engine-scope.

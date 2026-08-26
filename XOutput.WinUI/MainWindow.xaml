@@ -1,0 +1,99 @@
+<Window
+    x:Class="XOutput.WinUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tb="using:H.NotifyIcon"
+    Title="XOutput">
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>   <!-- custom title bar -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== Custom title bar (drag region) ===== -->
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Image x:Name="TitleBarIcon" Grid.Column="0" Source="/Assets/icon.ico"
+                   Width="16" Height="16" Margin="12,0,8,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="TitleBarText" Grid.Column="1" Text="XOutput"
+                       VerticalAlignment="Center" FontSize="12" Style="{ThemeResource CaptionTextBlockStyle}"/>
+        </Grid>
+
+        <!-- ===== Body: NavigationView + pages ===== -->
+        <NavigationView x:Name="NavView" Grid.Row="1"
+                        IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        PaneDisplayMode="Left"
+                        SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Home" Tag="Home">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80F;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Controller Test" Tag="ControllerTest">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8F1;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Mapping" Tag="Mapping">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8FD;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Diagnostics" Tag="Diagnostics">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D9;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Settings" Tag="Settings">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="About" Tag="About">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+            <NavigationView.Content>
+                <!-- Page transitions: WinUI 3's Frame animates navigation with
+                     NavigationThemeTransition by default (Fluent slide-in, per
+                     the WinRT docs); declaring it here explicitly guarantees it
+                     for every page and keeps the standard Fluent timing — we do
+                     not override or replace it with a custom transition. -->
+                <Frame x:Name="ContentFrame">
+                    <Frame.ContentTransitions>
+                        <TransitionCollection>
+                            <NavigationThemeTransition/>
+                        </TransitionCollection>
+                    </Frame.ContentTransitions>
+                </Frame>
+            </NavigationView.Content>
+        </NavigationView>
+
+        <!-- ===== Tray icon (H.NotifyIcon.WinUI) ===== -->
+        <tb:TaskbarIcon x:Name="TrayIcon"
+                        ToolTipText="XOutput"
+                        IconSource="/Assets/icon.ico"
+                        MenuActivation="LeftOrRightClick"
+                        ContextMenuMode="SecondWindow">
+            <tb:TaskbarIcon.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Show XOutput" Click="TrayShow_Click"/>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem Text="Exit" Click="TrayExit_Click"/>
+                </MenuFlyout>
+            </tb:TaskbarIcon.ContextFlyout>
+        </tb:TaskbarIcon>
+    </Grid>
+</Window>

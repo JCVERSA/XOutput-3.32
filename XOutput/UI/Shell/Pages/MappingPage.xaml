@@ -230,6 +230,8 @@
                                             <Components:XBox Width="280" Height="160" Margin="0,10,0,0" HorizontalAlignment="Center"
                                                              XInputType="{Binding DataContext.SelectedTarget, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, TargetNullValue={x:Static xin:XInputTypes.A}}"
                                                              Highlight="{Binding DataContext.HasMapping, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                             LiveTarget="{Binding DataContext.SelectedTarget, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, TargetNullValue={x:Static xin:XInputTypes.A}}"
+                                                             LiveValue="{Binding DataContext.RawValue, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                                              Visibility="{Binding DataContext.HasMapping, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                         </StackPanel>
                                     </Border>

@@ -16,7 +16,7 @@ namespace XOutput.Tools.Tests
         [DataRow(new String[] { "--minimized" }, true)]
         [DataRow(new String[] { "other" }, false)]
         [DataRow(new String[] { "other", "--minimized" }, true)]
-        [DataTestMethod]
+        [TestMethod]
         public void CompareTest(string[] arguments, bool minimized)
         {
             ArgumentParser parser = new ArgumentParser(arguments);

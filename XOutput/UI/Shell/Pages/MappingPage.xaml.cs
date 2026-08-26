@@ -39,7 +39,7 @@ namespace XOutput.UI.Shell.Pages
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             viewModel.Update();
-            timer.Interval = TimeSpan.FromMilliseconds(10);
+            timer.Interval = TimeSpan.FromMilliseconds(33);
             timer.Tick += TimerTick;
             timer.Start();
         }

@@ -5,10 +5,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:xin="clr-namespace:XOutput.Devices.XInput"
         xmlns:local="clr-namespace:XOutput.UI.Component"
+        xmlns:conv="clr-namespace:XOutput.UI.Converters"
         mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance Type=local:XBoxViewModel, IsDesignTimeCreatable=False}"
         Stretch="Uniform"
         d:DesignHeight="240" d:DesignWidth="440">
+    <Viewbox.Resources>
+        <conv:ValueToOpacityConverter x:Key="ValueToOpacityConverter"/>
+        <conv:StickOffsetConverter x:Key="StickOffsetConverter"/>
+    </Viewbox.Resources>
 
     <!-- ================================================================
          Live-reactive controller visualization (rendering swap).
@@ -52,28 +57,10 @@ C 200,64 178,62 150,55 Z"
         <!-- LT -->
         <Rectangle Canvas.Left="116" Canvas.Top="18" Width="56" Height="26" RadiusX="7" RadiusY="7"
                    Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2" Fill="{x:Null}"/>
+                <!-- LT: continuous fill proportional to the live trigger value (0-1) -->
         <Rectangle Canvas.Left="119" Canvas.Top="21" Width="50" Height="20" RadiusX="6" RadiusY="6"
-                   Fill="{StaticResource BrushPrimary}">
-            <Rectangle.Style>            <Style TargetType="Shape">
-                <Setter Property="Opacity" Value="0"/>
-                <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.L2}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.L2}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
-                </Style.Triggers>
-            </Style></Rectangle.Style>
-        </Rectangle>
+                   Fill="{StaticResource BrushPrimary}"
+                   Opacity="{Binding Model.LeftTrigger, Converter={StaticResource ValueToOpacityConverter}}"/>
         <!-- LB -->
         <Rectangle Canvas.Left="118" Canvas.Top="46" Width="60" Height="18" RadiusX="5" RadiusY="5"
                    Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2" Fill="{x:Null}"/>
@@ -102,28 +89,10 @@ C 200,64 178,62 150,55 Z"
         <!-- RT -->
         <Rectangle Canvas.Left="268" Canvas.Top="18" Width="56" Height="26" RadiusX="7" RadiusY="7"
                    Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2" Fill="{x:Null}"/>
+                <!-- RT: continuous fill proportional to the live trigger value (0-1) -->
         <Rectangle Canvas.Left="271" Canvas.Top="21" Width="50" Height="20" RadiusX="6" RadiusY="6"
-                   Fill="{StaticResource BrushPrimary}">
-            <Rectangle.Style>            <Style TargetType="Shape">
-                <Setter Property="Opacity" Value="0"/>
-                <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.R2}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.R2}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
-                </Style.Triggers>
-            </Style></Rectangle.Style>
-        </Rectangle>
+                   Fill="{StaticResource BrushPrimary}"
+                   Opacity="{Binding Model.RightTrigger, Converter={StaticResource ValueToOpacityConverter}}"/>
         <!-- RB -->
         <Rectangle Canvas.Left="262" Canvas.Top="46" Width="60" Height="18" RadiusX="5" RadiusY="5"
                    Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2" Fill="{x:Null}"/>
@@ -366,115 +335,274 @@ C 200,64 178,62 150,55 Z"
                    IsHitTestVisible="False"/>
 
         <!-- ================= Sticks ================= -->
-        <!-- Left stick (150,148) -->
+        <!-- Left stick (150,148): X/Y direction arrows + center press -->
         <Ellipse Canvas.Left="124" Canvas.Top="122" Width="52" Height="52"
                  Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2"/>
+        <!-- center press (L3) -->
         <Ellipse Canvas.Left="133" Canvas.Top="131" Width="34" Height="34" Fill="{StaticResource BrushPrimary}">
             <Ellipse.Style>            <Style TargetType="Shape">
                 <Setter Property="Opacity" Value="0"/>
                 <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LX}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LX}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LY}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LY}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.L3}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.L3}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.L3}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.L3}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
                 </Style.Triggers>
             </Style></Ellipse.Style>
+                    <Ellipse.RenderTransform>
+                <TranslateTransform>
+                    <TranslateTransform.X>
+                        <Binding Path="Model.LeftStickX" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="X"/>
+                    </TranslateTransform.X>
+                    <TranslateTransform.Y>
+                        <Binding Path="Model.LeftStickY" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="Y"/>
+                    </TranslateTransform.Y>
+                </TranslateTransform>
+            </Ellipse.RenderTransform>
+</Ellipse>
+                <Ellipse Canvas.Left="142" Canvas.Top="140" Width="16" Height="16"
+                 Fill="{StaticResource BrushSurfaceContainerHigh}" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.6">
+            <Ellipse.RenderTransform>
+                <TranslateTransform>
+                    <TranslateTransform.X>
+                        <Binding Path="Model.LeftStickX" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="X"/>
+                    </TranslateTransform.X>
+                    <TranslateTransform.Y>
+                        <Binding Path="Model.LeftStickY" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="Y"/>
+                    </TranslateTransform.Y>
+                </TranslateTransform>
+            </Ellipse.RenderTransform>
         </Ellipse>
-        <Ellipse Canvas.Left="142" Canvas.Top="140" Width="16" Height="16"
-                 Fill="{StaticResource BrushSurfaceContainerHigh}" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.6"/>
-        <!-- Right stick (292,142) -->
+        <!-- horizontal axis (LX) -->
+        <Path Data="M 5,0 L 0,4 L 5,8 Z" Canvas.Left="115" Canvas.Top="144" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <Path Data="M 0,0 L 5,4 L 0,8 Z" Canvas.Left="177" Canvas.Top="144" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <!-- vertical axis (LY) -->
+        <Path Data="M 0,5 L 4,0 L 8,5 Z" Canvas.Left="146" Canvas.Top="113" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <Path Data="M 0,0 L 4,5 L 8,0 Z" Canvas.Left="146" Canvas.Top="175" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.LY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <!-- Right stick (292,142): X/Y direction arrows + center press -->
         <Ellipse Canvas.Left="266" Canvas.Top="116" Width="52" Height="52"
                  Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="2"/>
+        <!-- center press (R3) -->
         <Ellipse Canvas.Left="275" Canvas.Top="125" Width="34" Height="34" Fill="{StaticResource BrushPrimary}">
             <Ellipse.Style>            <Style TargetType="Shape">
                 <Setter Property="Opacity" Value="0"/>
                 <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RX}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RX}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RY}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RY}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.R3}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.9"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.R3}"/>
-                        <Condition Binding="{Binding Model.Highlight}" Value="False"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Opacity" Value="0.35"/>
-                </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.R3}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.R3}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
                 </Style.Triggers>
             </Style></Ellipse.Style>
+                    <Ellipse.RenderTransform>
+                <TranslateTransform>
+                    <TranslateTransform.X>
+                        <Binding Path="Model.RightStickX" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="X"/>
+                    </TranslateTransform.X>
+                    <TranslateTransform.Y>
+                        <Binding Path="Model.RightStickY" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="Y"/>
+                    </TranslateTransform.Y>
+                </TranslateTransform>
+            </Ellipse.RenderTransform>
+</Ellipse>
+                <Ellipse Canvas.Left="284" Canvas.Top="134" Width="16" Height="16"
+                 Fill="{StaticResource BrushSurfaceContainerHigh}" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.6">
+            <Ellipse.RenderTransform>
+                <TranslateTransform>
+                    <TranslateTransform.X>
+                        <Binding Path="Model.RightStickX" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="X"/>
+                    </TranslateTransform.X>
+                    <TranslateTransform.Y>
+                        <Binding Path="Model.RightStickY" Converter="{StaticResource StickOffsetConverter}" ConverterParameter="Y"/>
+                    </TranslateTransform.Y>
+                </TranslateTransform>
+            </Ellipse.RenderTransform>
         </Ellipse>
-        <Ellipse Canvas.Left="284" Canvas.Top="134" Width="16" Height="16"
-                 Fill="{StaticResource BrushSurfaceContainerHigh}" Stroke="{StaticResource BrushOutlineVariant}" StrokeThickness="1.6"/>
-
+        <!-- horizontal axis (RX) -->
+        <Path Data="M 5,0 L 0,4 L 5,8 Z" Canvas.Left="257" Canvas.Top="138" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <Path Data="M 0,0 L 5,4 L 0,8 Z" Canvas.Left="319" Canvas.Top="138" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RX}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <!-- vertical axis (RY) -->
+        <Path Data="M 0,5 L 4,0 L 8,5 Z" Canvas.Left="288" Canvas.Top="107" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
+        <Path Data="M 0,0 L 4,5 L 8,0 Z" Canvas.Left="288" Canvas.Top="169" Fill="{StaticResource BrushPrimary}">
+            <Path.Style>            <Style TargetType="Shape">
+                <Setter Property="Opacity" Value="0"/>
+                <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.9"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Model.XInputType}" Value="{x:Static xin:XInputTypes.RY}"/>
+                                <Condition Binding="{Binding Model.Highlight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Opacity" Value="0.35"/>
+                        </MultiDataTrigger>
+                </Style.Triggers>
+            </Style></Path.Style>
+        </Path>
         <!-- ================= Center cluster ================= -->
         <!-- Back -->
         <Rectangle Canvas.Left="200" Canvas.Top="100" Width="16" Height="9" RadiusX="4" RadiusY="4"

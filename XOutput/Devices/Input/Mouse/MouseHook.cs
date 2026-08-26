@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +29,12 @@ namespace XOutput.Devices.Input.Mouse
                 }
                 return NativeMethods.CallNextHookEx(hookPtr, nCode, wParam, lParam);
             };
-            hookPtr = NativeMethods.SetWindowsHookEx(HookType.WH_MOUSE_LL, hook, Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]), 0);
+            // For low-level hooks (WH_MOUSE_LL) the module handle is ignored by the
+            // system, but must be a valid HMODULE of the process. GetModuleHandle(null)
+            // returns the executable's own module handle and is the canonical, safe
+            // choice on .NET Core (Marshal.GetHINSTANCE on a Core module can return an
+            // invalid handle and make SetWindowsHookEx fail -> startup abort).
+            hookPtr = NativeMethods.SetWindowsHookEx(HookType.WH_MOUSE_LL, hook, NativeMethods.GetModuleHandle(null), 0);
             if (hookPtr == IntPtr.Zero)
             {
                 throw new Win32Exception("Unable to set MouseHook");
@@ -99,6 +103,9 @@ namespace XOutput.Devices.Input.Mouse
 
     internal class NativeMethods
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetModuleHandle(string moduleName);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SetWindowsHookEx(HookType hookType, HookProc callback, IntPtr hMod, uint dwThreadId);
 

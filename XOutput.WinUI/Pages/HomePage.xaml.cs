@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,11 +20,14 @@ namespace XOutput.WinUI.Pages
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        private const string SettingsFilePath = "settings.json";
         private readonly DirectInputDevices directInputDevices = new DirectInputDevices();
+        private readonly Settings settings;
 
         public HomePage()
         {
             this.InitializeComponent();
+            settings = Settings.Load(SettingsFilePath);
 
             // Micro-interaction: hover/press scale feedback on the compositor thread.
             MicroInteractions.AttachScaleFeedback(AddControllerButton);
@@ -61,7 +65,33 @@ namespace XOutput.WinUI.Pages
 
         private void Refresh()
         {
-            var devices = directInputDevices.GetInputDevices(allDevices: false).ToList();
+            // Enumerate DirectInput hardware, honoring the ShowAll setting (mirrors
+            // WPF MainWindowViewModel.RefreshGameControllers).
+            List<Vortice.DirectInput.DeviceInstance> instances =
+                directInputDevices.GetInputDevices(settings.ShowAll).ToList();
+
+            // Drop wrappers that are disconnected or no longer present on the bus.
+            foreach (var device in InputDevices.Instance.GetDevices().OfType<DirectDevice>().ToArray())
+            {
+                if (!instances.Any(x => x.InstanceGuid == device.Id) || !device.Connected)
+                {
+                    InputDevices.Instance.Remove(device);
+                    device.Dispose();
+                }
+            }
+
+            // Wrap newly detected devices. CreateDirectDevice adds the wrapper to
+            // InputDevices.Instance and returns null for devices that should be skipped.
+            foreach (var instance in instances)
+            {
+                if (!InputDevices.Instance.GetDevices().OfType<DirectDevice>().Any(d => d.Id == instance.InstanceGuid))
+                {
+                    directInputDevices.CreateDirectDevice(instance);
+                }
+            }
+
+            // Bind from the shared registry so the list stays in sync with it.
+            var devices = InputDevices.Instance.GetDevices().ToList();
             DevicesList.ItemsSource = devices;
 
             var controllers = Controllers.Instance.GetControllers().ToList();
@@ -81,7 +111,7 @@ namespace XOutput.WinUI.Pages
 
         private void AddController_Click(object sender, RoutedEventArgs e)
         {
-            _ = new AddControllerDialog().ShowAsync();
+            _ = new AddControllerDialog { XamlRoot = this.XamlRoot }.ShowAsync();
         }
     }
 

@@ -155,7 +155,7 @@ namespace XOutput.WinUI
                     case "Mapping": ContentFrame.Navigate(typeof(MappingPage)); break;
                     case "Diagnostics": ContentFrame.Navigate(typeof(DiagnosticsPage)); break;
                     case "Settings": ContentFrame.Navigate(typeof(SettingsPage)); break;
-                    case "About": _ = new Dialogs.AboutDialog().ShowAsync(); break;
+                    case "About": _ = new Dialogs.AboutDialog { XamlRoot = RootGrid.XamlRoot }.ShowAsync(); break;
                 }
             }
         }

@@ -1,0 +1,29 @@
+<Page
+    x:Class="XOutput.WinUI.Pages.DiagnosticsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Padding="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Diagnostics" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <Button x:Name="ExportButton" Content="Export report" HorizontalAlignment="Right" Click="Export_Click"/>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="12">
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="System" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="ViGEm: " TextWrapping="Wrap"><Run x:Name="VigemResult"/></TextBlock>
+                    </StackPanel>
+                </Border>
+                <ItemsControl x:Name="DeviceDiagnostics"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

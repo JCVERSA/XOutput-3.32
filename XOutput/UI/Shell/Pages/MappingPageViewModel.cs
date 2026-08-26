@@ -49,10 +49,9 @@ namespace XOutput.UI.Shell.Pages
     /// <summary>
     /// The "Virtual Gamepad" tab of the mapping page (informational).
     /// </summary>
-    public sealed class VirtualGamepadTab : INotifyPropertyChanged
+    public sealed class VirtualGamepadTab
     {
         public string Title => LanguageModel.Instance.Translate("VirtualGamepad");
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
@@ -65,6 +64,7 @@ namespace XOutput.UI.Shell.Pages
         private readonly MainWindowViewModel mainViewModel;
         private readonly Dictionary<IInputDevice, MappingDeviceTab> tabsByDevice = new Dictionary<IInputDevice, MappingDeviceTab>();
         private InputMapper controllerMapper;
+        private InputMapper lastControllerMapper;
         private MapperData currentMapperData;
         private bool disposed = false;
 
@@ -200,7 +200,9 @@ namespace XOutput.UI.Shell.Pages
         public bool HasMapping => currentMapperData != null;
 
         /// <summary>
-        /// Raised when the selected device is disconnected (page navigates home).
+        /// Raised when the last physical device tab is removed because its device
+        /// disconnected (the page then navigates home). Individual tabs are removed
+        /// in place without navigating away.
         /// </summary>
         public event Action DeviceDisconnected;
 
@@ -218,6 +220,7 @@ namespace XOutput.UI.Shell.Pages
             }
             Tabs.Add(new VirtualGamepadTab());
             controllerMapper = Controllers.Instance.GetControllers().FirstOrDefault()?.Mapper;
+            lastControllerMapper = controllerMapper;
             if (Tabs.Count > 1)
             {
                 SelectedTab = initialDevice != null && tabsByDevice.ContainsKey(initialDevice)
@@ -228,12 +231,22 @@ namespace XOutput.UI.Shell.Pages
 
         /// <summary>
         /// Refreshes the live views and the configure preview (called by the page timer).
+        /// Also re-resolves the target mapper so edits keep working when controllers
+        /// are added or removed while the page is open.
         /// </summary>
         public void Update()
         {
             if (disposed)
             {
                 return;
+            }
+            InputMapper mapper = Controllers.Instance.GetControllers().FirstOrDefault()?.Mapper;
+            if (!ReferenceEquals(mapper, lastControllerMapper))
+            {
+                lastControllerMapper = mapper;
+                controllerMapper = mapper;
+                RefreshCurrentMapperData();
+                RaiseConfigureChanged();
             }
             if (SelectedTab is MappingDeviceTab deviceTab)
             {
@@ -288,7 +301,35 @@ namespace XOutput.UI.Shell.Pages
 
         private void Device_Disconnected(object sender, DeviceDisconnectedEventArgs e)
         {
-            DeviceDisconnected?.Invoke();
+            if (!(sender is IInputDevice device))
+            {
+                return;
+            }
+            // Disconnected fires on the input reader thread; marshal to the UI thread.
+            System.Windows.Application.Current?.Dispatcher?.BeginInvoke((Action)(() =>
+            {
+                if (disposed || !tabsByDevice.TryGetValue(device, out var tab))
+                {
+                    return;
+                }
+                Tabs.Remove(tab);
+                device.Disconnected -= Device_Disconnected;
+                tab.ViewModel.Dispose();
+                tabsByDevice.Remove(device);
+                if (SelectedTab == tab)
+                {
+                    MappingDeviceTab next = Tabs.OfType<MappingDeviceTab>().FirstOrDefault();
+                    if (next != null)
+                    {
+                        SelectedTab = next;
+                    }
+                    else
+                    {
+                        // No physical device left — leave the mapping page.
+                        DeviceDisconnected?.Invoke();
+                    }
+                }
+            }));
         }
 
         private void RefreshSources()

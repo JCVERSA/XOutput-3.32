@@ -1,0 +1,36 @@
+<Page
+    x:Class="XOutput.WinUI.Pages.ControllerTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:XOutput.WinUI.Controls"
+    xmlns:xin="using:XOutput.Devices.XInput">
+
+    <Grid Padding="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Controller Test" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,12"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="16">
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Virtual controller output" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <!-- Live visualization driven by a test loop (see code-behind). -->
+                        <controls:XboxControllerView x:Name="TestView" Width="440" Height="250" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="XInput sources" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="Configure a controller to see its live XInput state here."
+                                   TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

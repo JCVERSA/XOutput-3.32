@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Components="clr-namespace:XOutput.UI.Component"
+             xmlns:xin="clr-namespace:XOutput.Devices.XInput"
              xmlns:local="clr-namespace:XOutput.UI.Windows"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=local:AutoConfigureViewModel, IsDesignTimeCreatable=False}"
@@ -93,7 +94,9 @@
         </Grid>
 
         <Components:XBox Grid.Row="4" Margin="0,12,0,0"
-                         XInputType="{Binding Model.XInput}"
-                         Highlight="{Binding Model.Highlight}"/>
+                         XInputType="{Binding DataContext.Model.XInput, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                         Highlight="{Binding DataContext.Model.Highlight, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                         LiveTarget="{Binding DataContext.Model.XInput, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, TargetNullValue={x:Static xin:XInputTypes.A}}"
+                         LiveValue="{Binding DataContext.Model.MaxType.Value, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
     </Grid>
 </UserControl>

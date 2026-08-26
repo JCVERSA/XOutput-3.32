@@ -16,7 +16,7 @@ namespace XOutput.UpdateChecker.Tests
         [DataRow("1.0", "2.0", VersionCompare.NeedsUpgrade)]
         [DataRow("1.0.1", "1.0.0", VersionCompare.NewRelease)]
         [DataRow("1.0.1", "1.0.0as", VersionCompare.Error)]
-        [DataTestMethod]
+        [TestMethod]
         public void CompareTest(string appVersion, string latestVersion, VersionCompare expected)
         {
             Assert.AreEqual(expected, Version.Compare(appVersion, latestVersion));

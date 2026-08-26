@@ -10,14 +10,20 @@
              d:DesignHeight="700" d:DesignWidth="700"
              Loaded="WindowLoaded" Unloaded="WindowUnloaded">
     <Grid>
-        <StackPanel x:Name="EmptyState" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ControllerTestMenu'}"
+                   Style="{StaticResource TextHeadlineMd}" Margin="16,12,16,12"/>
+        <StackPanel x:Name="EmptyState" Grid.Row="1" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"
                     DataContext="{x:Static app:LanguageModel.Instance}">
             <TextBlock Text="{Binding Data, Converter={StaticResource LanguageConverter}, ConverterParameter='GameControllers'}"
                        Style="{StaticResource TextTitleSm}" HorizontalAlignment="Center"/>
             <TextBlock Text="{Binding Data, Converter={StaticResource LanguageConverter}, ConverterParameter='AddController'}"
                        Style="{StaticResource TextBodyBase}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
         </StackPanel>
-        <Grid x:Name="Content" Margin="12">
+        <Grid x:Name="PageContent" Grid.Row="1" Margin="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" MinWidth="360"/>
                 <ColumnDefinition Width="*" MinWidth="200"/>

@@ -1,0 +1,16 @@
+<ContentDialog
+    x:Class="XOutput.WinUI.Dialogs.AboutDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="About XOutput"
+    CloseButtonText="Close">
+
+    <StackPanel Spacing="8">
+        <TextBlock Text="XOutput" Style="{ThemeResource TitleTextBlockStyle}"/>
+        <TextBlock x:Name="VersionText" Style="{ThemeResource CaptionTextBlockStyle}"/>
+        <TextBlock Text="Converts DirectInput to XInput for Windows."
+                   TextWrapping="Wrap"/>
+        <TextBlock Text="https://github.com/csutorasa/XOutput"
+                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+    </StackPanel>
+</ContentDialog>

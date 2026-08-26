@@ -19,3 +19,6 @@ TestResults
 
 # node modules
 Web/node_modules
+
+# Browser preview artifacts (dev-time only)
+preview-artifacts/

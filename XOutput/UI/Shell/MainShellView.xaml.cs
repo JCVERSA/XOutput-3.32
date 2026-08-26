@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Linq;
 using XOutput.Logging;
 using XOutput.UI.Windows;
 
@@ -14,6 +15,10 @@ namespace XOutput.UI.Shell
     public partial class MainShellView : UserControl
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(MainShellView));
+
+        private const int MaxLogLines = 4000;
+        private const int MaxLogChars = 300000;
+        private int logLineCount = 0;
 
         private ShellViewModel viewModel;
 
@@ -62,6 +67,20 @@ namespace XOutput.UI.Shell
                 try
                 {
                     logBox.AppendText(msg + Environment.NewLine);
+                    logLineCount++;
+                    if (logLineCount > MaxLogLines || logBox.Text.Length > MaxLogChars)
+                    {
+                        // Trim the oldest half of the log so long sessions do not
+                        // grow the TextBox memory without bound.
+                        string text = logBox.Text;
+                        int cut = text.IndexOf('\n', Math.Max(0, text.Length / 2));
+                        if (cut < 0)
+                        {
+                            cut = text.Length - 1;
+                        }
+                        logBox.Text = text.Substring(cut + 1);
+                        logLineCount = logBox.Text.Count(c => c == '\n') + 1;
+                    }
                 }
                 catch (Exception ex)
                 {

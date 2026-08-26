@@ -21,10 +21,10 @@ namespace XOutput.UI.Shell
         /// </summary>
         public ShellPageType PageType { get; }
 
-        public ShellNavItem(string labelKey, string iconData, ShellPageType pageType)
+        public ShellNavItem(string labelKey, Geometry icon, ShellPageType pageType)
         {
             LabelKey = labelKey;
-            Icon = Geometry.Parse(iconData);
+            Icon = icon;
             PageType = pageType;
         }
 

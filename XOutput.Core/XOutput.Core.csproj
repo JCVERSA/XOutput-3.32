@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- UI-framework-agnostic business logic. Referenced by both the WPF app
+         (XOutput) and the WinUI 3 app (XOutput.WinUI). -->
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <!-- Allows building net9.0-windows from non-Windows hosts (CI). No effect on Windows. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- Keep the original XOutput.* namespaces so existing code needs no namespace edits. -->
+    <RootNamespace>XOutput</RootNamespace>
+    <!-- Distinct assembly name so it can sit next to the XOutput.exe app assembly. -->
+    <AssemblyName>XOutput.Core</AssemblyName>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Vortice.DirectInput" Version="3.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Language JSON files are read at runtime by Tools/LanguageManager from the
+         assembly's manifest resources (assembly-agnostic lookup; see LanguageManager). -->
+    <EmbeddedResource Include="Resources\Languages\*.json" />
+  </ItemGroup>
+
+</Project>

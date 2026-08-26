@@ -26,7 +26,7 @@ namespace XOutput.UI.Shell.Pages
             InitializeComponent();
             if (viewModel == null || controller == null)
             {
-                Content.Visibility = Visibility.Collapsed;
+                PageContent.Visibility = Visibility.Collapsed;
                 EmptyState.Visibility = Visibility.Visible;
             }
         }
@@ -38,7 +38,7 @@ namespace XOutput.UI.Shell.Pages
                 return;
             }
             viewModel.Update();
-            timer.Interval = TimeSpan.FromMilliseconds(10);
+            timer.Interval = TimeSpan.FromMilliseconds(33);
             timer.Tick += TimerTick;
             timer.Start();
         }

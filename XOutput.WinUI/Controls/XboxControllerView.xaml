@@ -1,0 +1,87 @@
+<UserControl
+    x:Class="XOutput.WinUI.Controls.XboxControllerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:xin="using:XOutput.Devices.XInput"
+    xmlns:conv="using:XOutput.WinUI.Converters">
+
+    <!-- Live-reactive controller visualization, ported from the WPF XBox.xaml.
+         Continuous trigger opacity + analog stick movement; digital buttons use
+         highlight (blink) via the Highlight DP. -->
+
+    <UserControl.Resources>
+        <conv:ValueToOpacityConverter x:Key="ValueToOpacityConverter"/>
+        <conv:StickOffsetConverter x:Key="StickOffsetConverter"/>
+    </UserControl.Resources>
+
+    <!-- The controller is driven by code-behind (see XboxControllerView.xaml.cs):
+         LiveTarget/LiveValue/Highlight dependency properties feed the shared
+         XBoxModel, and the shapes below bind to it via x:Bind through the model. -->
+    <Canvas Width="440" Height="250" x:Name="CanvasRoot">
+
+        <!-- Controller body outline -->
+        <Path Data="M 150,55 C 115,55 85,70 62,100 C 40,130 38,168 52,192 C 58,204 76,210 94,208 C 114,206 130,192 140,172 L 148,166 C 162,192 190,202 220,202 C 250,202 278,192 292,166 L 300,172 C 310,192 326,206 346,208 C 364,210 382,204 388,192 C 402,168 400,130 378,100 C 355,70 325,55 290,55 C 262,62 240,64 220,64 C 200,64 178,62 150,55 Z"
+              Stroke="{ThemeResource CardBorderBrush}" StrokeThickness="2" StrokeLineJoin="Round"/>
+
+        <!-- Triggers (continuous opacity from live value) -->
+        <Rectangle x:Name="LT" Canvas.Left="119" Canvas.Top="21" Width="50" Height="20" RadiusX="6" RadiusY="6"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Rectangle x:Name="RT" Canvas.Left="271" Canvas.Top="21" Width="50" Height="20" RadiusX="6" RadiusY="6"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+
+        <!-- Sticks: outer socket + moving cap + glow (position from live X/Y) -->
+        <Ellipse x:Name="LSocket" Canvas.Left="124" Canvas.Top="122" Width="52" Height="52"
+                 Stroke="{ThemeResource CardBorderBrush}" StrokeThickness="2"/>
+        <Ellipse x:Name="LGlow" Canvas.Left="133" Canvas.Top="131" Width="34" Height="34"
+                 Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0">
+            <Ellipse.RenderTransform>
+                <TranslateTransform x:Name="LGlowTransform"/>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <Ellipse x:Name="LCap" Canvas.Left="142" Canvas.Top="140" Width="16" Height="16"
+                 Fill="{ThemeResource SystemControlForegroundBaseHighBrush}" Stroke="{ThemeResource CardBorderBrush}" StrokeThickness="1.6">
+            <Ellipse.RenderTransform>
+                <TranslateTransform x:Name="LCapTransform"/>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+
+        <Ellipse x:Name="RSocket" Canvas.Left="266" Canvas.Top="116" Width="52" Height="52"
+                 Stroke="{ThemeResource CardBorderBrush}" StrokeThickness="2"/>
+        <Ellipse x:Name="RGlow" Canvas.Left="275" Canvas.Top="125" Width="34" Height="34"
+                 Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0">
+            <Ellipse.RenderTransform>
+                <TranslateTransform x:Name="RGlowTransform"/>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <Ellipse x:Name="RCap" Canvas.Left="284" Canvas.Top="134" Width="16" Height="16"
+                 Fill="{ThemeResource SystemControlForegroundBaseHighBrush}" Stroke="{ThemeResource CardBorderBrush}" StrokeThickness="1.6">
+            <Ellipse.RenderTransform>
+                <TranslateTransform x:Name="RCapTransform"/>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+
+        <!-- Face buttons (highlight blink via code-behind opacity) -->
+        <Ellipse x:Name="BtnA" Canvas.Left="295" Canvas.Top="107" Width="14" Height="14"
+                 Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Ellipse x:Name="BtnB" Canvas.Left="315" Canvas.Top="87" Width="14" Height="14"
+                 Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Ellipse x:Name="BtnX" Canvas.Left="275" Canvas.Top="87" Width="14" Height="14"
+                 Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Ellipse x:Name="BtnY" Canvas.Left="295" Canvas.Top="67" Width="14" Height="14"
+                 Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <!-- D-pad arms -->
+        <Rectangle x:Name="DpadUp" Canvas.Left="146" Canvas.Top="74" Width="8" Height="15" RadiusX="2" RadiusY="2"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Rectangle x:Name="DpadDown" Canvas.Left="146" Canvas.Top="111" Width="8" Height="15" RadiusX="2" RadiusY="2"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Rectangle x:Name="DpadLeft" Canvas.Left="124" Canvas.Top="96" Width="15" Height="8" RadiusX="2" RadiusY="2"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Rectangle x:Name="DpadRight" Canvas.Left="161" Canvas.Top="96" Width="15" Height="8" RadiusX="2" RadiusY="2"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <!-- Shoulders -->
+        <Rectangle x:Name="BtnLB" Canvas.Left="121" Canvas.Top="49" Width="54" Height="12" RadiusX="4" RadiusY="4"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+        <Rectangle x:Name="BtnRB" Canvas.Left="265" Canvas.Top="49" Width="54" Height="12" RadiusX="4" RadiusY="4"
+                   Fill="{ThemeResource SystemControlHighlightAccentBrush}" Opacity="0"/>
+    </Canvas>
+</UserControl>

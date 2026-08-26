@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:xin="clr-namespace:XOutput.Devices.XInput"
+        xmlns:xin="clr-namespace:XOutput.Devices.XInput;assembly=XOutput.Core"
         xmlns:local="clr-namespace:XOutput.UI.Component"
         xmlns:conv="clr-namespace:XOutput.UI.Converters"
         mc:Ignorable="d" 

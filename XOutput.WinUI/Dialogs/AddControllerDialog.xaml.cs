@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
+using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Devices.XInput;
 
@@ -66,7 +67,7 @@ namespace XOutput.WinUI.Dialogs
                     0 => "Select the device to configure.",
                     1 => "Move the requested input.",
                     2 => "Confirm the mapping.",
-                    _ => "Controller created.",
+                    _ => "Setup complete. The mapping engine isn't wired in yet, so no controller was created — this builds the wizard shell and step flow only.",
                 },
                 TextWrapping = TextWrapping.Wrap,
             };

@@ -1,25 +1,25 @@
 name: Build XOutput
 
-# Builds XOutput (net9.0-windows) in Release and produces the executable
-# as a downloadable artifact. Framework-dependent (portable exe + dlls —
-# no RID pinning, no single-file/self-contained by design).
+# Builds both apps in Release:
+#   - XOutput      (WPF, net9.0-windows)  — the working baseline + 38 tests
+#   - XOutput.WinUI (WinUI 3, self-contained single-file exe)
+# Runs on pushes/PRs to main (and legacy 3.x) + manual dispatch.
 
 on:
   push:
-    branches: [ 3.x ]
+    branches: [ main, 3.x ]
   pull_request:
-    branches: [ 3.x ]
-  workflow_dispatch:          # allow manual runs from the Actions tab
+    branches: [ main, 3.x ]
+  workflow_dispatch:
 
 env:
-  VERSION: '3.31'             # matches UpdateChecker/Version.cs AppVersion
+  VERSION: '3.32'             # matches XOutput/UpdateChecker/Version.cs AppVersion
   DOTNET_VERSION: '9.0.x'
 
 jobs:
-  build:
-    name: Build & publish exe (Release, net9.0-windows)
+  wpf:
+    name: WPF app (Release)
     runs-on: windows-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,15 +48,9 @@ jobs:
             -p:Version=$env:VERSION -p:AssemblyVersion=$env:VERSION -p:FileVersion=$env:VERSION `
             -o "${{ runner.temp }}/publish"
 
-      - name: Show output
-        shell: pwsh
-        run: Get-ChildItem -Recurse "${{ runner.temp }}/publish" | Select-Object Name, Length
-
       - name: Package zip
         shell: pwsh
-        run: |
-          Compress-Archive -Path "${{ runner.temp }}/publish/*" `
-            -DestinationPath "XOutput-$env:VERSION-net9.0-windows.zip" -Force
+        run: Compress-Archive -Path "${{ runner.temp }}/publish/*" -DestinationPath "XOutput-$env:VERSION-net9.0-windows.zip" -Force
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
@@ -70,4 +64,48 @@ jobs:
         with:
           name: XOutput-${{ env.VERSION }}-net9.0-windows.zip
           path: XOutput-${{ env.VERSION }}-net9.0-windows.zip
+          if-no-files-found: error
+
+  winui:
+    name: WinUI 3 app (Release, self-contained)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build (Release, x64)
+        run: dotnet build XOutput.WinUI/XOutput.WinUI.csproj -c Release -p:Platform=x64 -p:Version=$env:VERSION -p:AssemblyVersion=$env:VERSION -p:FileVersion=$env:VERSION
+
+      - name: Publish single-file self-contained (win-x64)
+        shell: pwsh
+        run: |
+          dotnet publish XOutput.WinUI/XOutput.WinUI.csproj -c Release -r win-x64 -p:Platform=x64 `
+            -p:Version=$env:VERSION -p:AssemblyVersion=$env:VERSION -p:FileVersion=$env:VERSION `
+            -o "${{ runner.temp }}/winui-publish"
+
+      - name: Show output
+        shell: pwsh
+        run: Get-ChildItem -Recurse "${{ runner.temp }}/winui-publish" | Select-Object Name, Length
+
+      - name: Package zip
+        shell: pwsh
+        run: Compress-Archive -Path "${{ runner.temp }}/winui-publish/*" -DestinationPath "XOutput.WinUI-$env:VERSION-win-x64.zip" -Force
+
+      - name: Upload exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XOutput.WinUI-${{ env.VERSION }}-win-x64
+          path: ${{ runner.temp }}/winui-publish/**
+          if-no-files-found: error
+
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XOutput.WinUI-${{ env.VERSION }}-win-x64.zip
+          path: XOutput.WinUI-${{ env.VERSION }}-win-x64.zip
           if-no-files-found: error

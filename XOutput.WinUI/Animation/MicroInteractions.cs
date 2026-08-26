@@ -90,10 +90,11 @@ namespace XOutput.WinUI.Animation
                 Vector3KeyFrameAnimation animation = Visual.Compositor.CreateVector3KeyFrameAnimation();
                 animation.Target = "Scale";
                 animation.Duration = duration;
-                // Standard Fluent easing (ease-in-out cubic Bézier).
-                animation.EasingFunction = Visual.Compositor.CreateCubicBezierEasingFunction(
+                // Standard Fluent easing (ease-in-out cubic Bézier), passed per key
+                // frame (WinUI 3's KeyFrameAnimation has no EasingFunction property).
+                CompositionEasingFunction easing = Visual.Compositor.CreateCubicBezierEasingFunction(
                     new Vector2(0.33f, 0f), new Vector2(0.67f, 1f));
-                animation.InsertKeyFrame(1f, new Vector3(target, target, 1f));
+                animation.InsertKeyFrame(1f, new Vector3(target, target, 1f), easing);
                 return animation;
             }
 
